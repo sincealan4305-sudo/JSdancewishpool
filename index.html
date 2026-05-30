@@ -3,128 +3,117 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>舞蹈許願池 ✨</title>
+<title>舞蹈許願池</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold: #C9A84C;
-    --gold-light: #F0D98A;
-    --gold-pale: #FDF6E3;
-    --deep: #1A1008;
-    --ink: #2D1F0A;
-    --muted: #8B7355;
-    --surface: #FBF5E8;
-    --card: #FFFDF5;
-    --border: rgba(201,168,76,0.25);
-    --border-strong: rgba(201,168,76,0.6);
-    --success: #2E7D32;
-    --success-bg: #E8F5E9;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'Noto Sans TC', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
+:root {
+  --gold: #C9A84C;
+  --gold-light: #F0D98A;
+  --deep: #1A1008;
+  --ink: #2D1F0A;
+  --muted: #8B7355;
+  --surface: #FBF5E8;
+  --card: #FFFDF5;
+  --border: rgba(201,168,76,0.25);
+  --border-strong: rgba(201,168,76,0.6);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Noto Sans TC', sans-serif; background: var(--surface); color: var(--ink); min-height: 100vh; }
 
-  .site-header { background: var(--deep); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--gold); }
-  .header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 60px; }
-  .logo { font-family: 'Noto Serif TC', serif; font-size: 1.15rem; color: var(--gold-light); letter-spacing: 0.08em; display: flex; align-items: center; gap: 8px; }
-  .nav-tabs { display: flex; height: 60px; }
-  .nav-tab { padding: 0 1.5rem; display: flex; align-items: center; font-size: 0.85rem; font-weight: 500; color: var(--muted); cursor: pointer; border-bottom: 3px solid transparent; transition: all 0.2s; letter-spacing: 0.05em; background: none; border-top: none; border-left: none; border-right: none; }
-  .nav-tab:hover { color: var(--gold-light); }
-  .nav-tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
+/* Header */
+.site-header { background: var(--deep); position: sticky; top: 0; z-index: 100; border-bottom: 1px solid var(--gold); }
+.header-inner { max-width: 900px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; padding: 0 2rem; height: 60px; }
+.logo { font-family: 'Noto Serif TC', serif; font-size: 1.1rem; color: var(--gold-light); letter-spacing: 0.08em; }
+.nav-tabs { display: flex; height: 60px; }
+.nav-tab { padding: 0 1.5rem; display: flex; align-items: center; font-size: 0.85rem; font-weight: 500; color: var(--muted); cursor: pointer; border: none; border-bottom: 3px solid transparent; background: none; transition: all 0.2s; letter-spacing: 0.05em; }
+.nav-tab:hover { color: var(--gold-light); }
+.nav-tab.active { color: var(--gold-light); border-bottom-color: var(--gold); }
 
-  .page { display: none; }
-  .page.active { display: block; }
+/* Pages */
+.page { display: none; }
+.page.active { display: block; }
 
-  .form-hero { background: linear-gradient(135deg, var(--deep) 0%, #2D1F0A 100%); padding: 3.5rem 2rem 2.5rem; text-align: center; }
-  .form-hero h1 { font-family: 'Noto Serif TC', serif; font-size: 2rem; color: var(--gold-light); letter-spacing: 0.12em; margin-bottom: 0.5rem; }
-  .form-hero p { color: rgba(240,217,138,0.65); font-size: 0.9rem; letter-spacing: 0.06em; }
-  .form-hero .stars { font-size: 1.4rem; letter-spacing: 0.3em; margin-bottom: 1rem; opacity: 0.8; }
+/* Hero */
+.hero { background: linear-gradient(135deg, var(--deep) 0%, #2D1F0A 100%); padding: 3rem 2rem 2.5rem; text-align: center; }
+.hero h1 { font-family: 'Noto Serif TC', serif; font-size: 1.9rem; color: var(--gold-light); letter-spacing: 0.12em; margin-bottom: 0.5rem; }
+.hero p { color: rgba(240,217,138,0.6); font-size: 0.88rem; }
+.stars { font-size: 1.3rem; letter-spacing: 0.3em; margin-bottom: 1rem; opacity: 0.8; }
 
-  .form-wrap { max-width: 680px; margin: 0 auto; padding: 2.5rem 2rem 4rem; }
-  .form-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin-bottom: 1.25rem; }
-  .form-card h2 { font-family: 'Noto Serif TC', serif; font-size: 1rem; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 1.5rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-  .form-card h2 .num { width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: var(--deep); font-size: 0.7rem; font-family: 'Noto Sans TC', sans-serif; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+/* Form */
+.form-wrap { max-width: 680px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.form-card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.75rem; margin-bottom: 1.25rem; }
+.card-title { font-family: 'Noto Serif TC', serif; font-size: 0.95rem; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 1.25rem; padding-bottom: 0.75rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+.num-badge { width: 22px; height: 22px; border-radius: 50%; background: var(--gold); color: var(--deep); font-size: 0.7rem; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; font-family: 'Noto Sans TC', sans-serif; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+.row1 { margin-bottom: 1rem; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font-size: 0.78rem; font-weight: 500; color: var(--muted); letter-spacing: 0.05em; }
+.req { color: var(--gold); }
+.field input, .field select { padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; color: var(--ink); background: #FFFEF9; outline: none; transition: border-color 0.2s; }
+.field input:focus, .field select:focus { border-color: var(--gold); }
+.field select { appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7355' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
 
-  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
-  .field-row.full { grid-template-columns: 1fr; }
-  @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+/* Time pills */
+.time-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.time-pill { padding: 8px 14px; border: 1px solid var(--border-strong); border-radius: 20px; font-size: 0.82rem; color: var(--muted); cursor: pointer; background: #FFFEF9; user-select: none; transition: all 0.15s; }
+.time-pill:hover { border-color: var(--gold); color: var(--ink); }
+.time-pill.on { background: var(--gold); border-color: var(--gold); color: var(--deep); font-weight: 500; }
+.hint { font-size: 0.82rem; color: var(--muted); padding: 8px 0; }
 
-  .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 0.78rem; font-weight: 500; color: var(--muted); letter-spacing: 0.06em; }
-  .field label .req { color: var(--gold); margin-left: 2px; }
-  .field input, .field select { padding: 10px 14px; border: 1px solid var(--border-strong); border-radius: 8px; font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; color: var(--ink); background: #FFFEF9; outline: none; transition: border-color 0.2s, box-shadow 0.2s; appearance: none; -webkit-appearance: none; }
-  .field input:focus, .field select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,0.12); }
-  .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7355' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 12px center; padding-right: 34px; }
+/* Conditional */
+.cond { display: none; margin-top: 1rem; }
+.cond.show { display: block; }
 
-  .time-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 2px; }
-  .time-pill { padding: 8px 14px; border: 1px solid var(--border-strong); border-radius: 20px; font-size: 0.82rem; color: var(--muted); cursor: pointer; transition: all 0.15s; background: #FFFEF9; user-select: none; }
-  .time-pill:hover { border-color: var(--gold); color: var(--ink); }
-  .time-pill.selected { background: var(--gold); border-color: var(--gold); color: var(--deep); font-weight: 500; }
-  .time-pill input { display: none; }
+/* Submit */
+.submit-btn { width: 100%; padding: 14px; background: var(--gold); border: none; border-radius: 8px; font-family: 'Noto Serif TC', serif; font-size: 1rem; font-weight: 700; color: var(--deep); cursor: pointer; letter-spacing: 0.15em; transition: all 0.2s; margin-top: 0.25rem; }
+.submit-btn:hover { background: var(--gold-light); }
+.submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.success-box { display: none; background: #E8F5E9; border: 1px solid #A5D6A7; border-radius: 10px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
+.success-box .ico { font-size: 2rem; margin-bottom: 8px; }
+.success-box p { color: #2E7D32; font-weight: 500; }
 
-  .cond-field { display: none; animation: slideDown 0.2s ease; }
-  .cond-field.show { display: flex; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+/* Leaderboard */
+.lb-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
+.stats-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 1rem; margin-bottom: 2rem; }
+.stat-box { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
+.stat-val { font-family: 'Noto Serif TC', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
+.stat-lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+.sec-header { display: flex; align-items: center; margin-bottom: 1rem; }
+.sec-title { font-family: 'Noto Serif TC', serif; font-size: 0.95rem; color: var(--gold); letter-spacing: 0.1em; flex: 1; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+.refresh-btn { padding: 6px 14px; background: none; border: 1px solid var(--border-strong); border-radius: 20px; color: var(--muted); font-size: 0.78rem; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; margin-left: 1rem; transition: all 0.15s; }
+.refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+.wish-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem 1.25rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem; }
+.rank-circle { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.95rem; flex-shrink: 0; font-family: 'Noto Serif TC', serif; }
+.r1 { background: var(--gold); color: var(--deep); }
+.r2 { background: #C0C0C0; color: #333; }
+.r3 { background: #CD7F32; color: #fff; }
+.rn { background: rgba(201,168,76,0.12); color: var(--muted); font-size: 0.85rem; }
+.wish-info { flex: 1; min-width: 0; }
+.wish-name { font-weight: 500; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.wish-tags { font-size: 0.75rem; color: var(--muted); margin-top: 3px; display: flex; gap: 6px; flex-wrap: wrap; }
+.tag { background: rgba(201,168,76,0.1); border: 1px solid var(--border); border-radius: 12px; padding: 2px 8px; }
+.total-count { display: flex; flex-direction: column; align-items: center; min-width: 52px; }
+.total-num { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; color: var(--gold); font-weight: 700; line-height: 1; }
+.total-lbl { font-size: 0.65rem; color: var(--muted); }
+.echo-btn { padding: 7px 14px; border: 1px solid var(--gold); border-radius: 20px; background: transparent; color: var(--gold); font-size: 0.78rem; cursor: pointer; white-space: nowrap; transition: all 0.15s; font-family: 'Noto Sans TC', sans-serif; }
+.echo-btn:hover { background: var(--gold); color: var(--deep); }
+.empty { text-align: center; padding: 3rem; color: var(--muted); }
+.empty .ico { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
+.notice { background: rgba(201,168,76,0.07); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 2rem; line-height: 1.6; }
 
-  .submit-btn { width: 100%; padding: 14px; background: var(--gold); border: none; border-radius: 8px; font-family: 'Noto Serif TC', serif; font-size: 1.05rem; font-weight: 700; color: var(--deep); cursor: pointer; letter-spacing: 0.15em; transition: all 0.2s; margin-top: 0.5rem; }
-  .submit-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
-  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+/* Modal */
+.overlay { display: none; position: fixed; inset: 0; background: rgba(26,16,8,0.75); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem; }
+.overlay.open { display: flex; }
+.modal { background: var(--card); border: 1px solid var(--border-strong); border-radius: 14px; padding: 2rem; max-width: 420px; width: 100%; }
+.modal h3 { font-family: 'Noto Serif TC', serif; font-size: 1.05rem; color: var(--gold); margin-bottom: 0.4rem; }
+.modal-target { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.25rem; padding: 0.4rem 0.75rem; background: rgba(201,168,76,0.08); border-radius: 6px; display: inline-block; }
+.modal-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+.modal-btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
+.btn-cancel { flex: 1; padding: 10px; background: none; border: 1px solid var(--border-strong); border-radius: 8px; color: var(--muted); cursor: pointer; font-family: 'Noto Sans TC', sans-serif; }
+.btn-ok { flex: 2; padding: 10px; background: var(--gold); border: none; border-radius: 8px; color: var(--deep); font-family: 'Noto Serif TC', serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; letter-spacing: 0.08em; }
+.btn-ok:disabled { opacity: 0.6; cursor: not-allowed; }
 
-  .success-msg { display: none; background: var(--success-bg); border: 1px solid #A5D6A7; border-radius: 10px; padding: 1.5rem; text-align: center; margin-top: 1rem; }
-  .success-msg .icon { font-size: 2rem; margin-bottom: 8px; }
-  .success-msg p { color: var(--success); font-weight: 500; font-size: 0.95rem; }
-
-  .lb-hero { background: linear-gradient(135deg, #1A1008 0%, #2D1F0A 60%, #1A1008 100%); padding: 3rem 2rem 2rem; text-align: center; }
-  .lb-hero h1 { font-family: 'Noto Serif TC', serif; font-size: 1.8rem; color: var(--gold-light); letter-spacing: 0.12em; margin-bottom: 0.4rem; }
-  .lb-hero p { color: rgba(240,217,138,0.6); font-size: 0.85rem; letter-spacing: 0.05em; }
-
-  .lb-wrap { max-width: 720px; margin: 0 auto; padding: 2rem 1.5rem 4rem; }
-  .lb-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 2rem; }
-  .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1rem; text-align: center; }
-  .stat-card .val { font-family: 'Noto Serif TC', serif; font-size: 1.8rem; color: var(--gold); font-weight: 700; }
-  .stat-card .lbl { font-size: 0.75rem; color: var(--muted); margin-top: 2px; letter-spacing: 0.05em; }
-
-  .lb-section-title { font-family: 'Noto Serif TC', serif; font-size: 0.95rem; color: var(--gold); letter-spacing: 0.1em; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
-
-  .wish-item { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem 1.25rem; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 1rem; transition: border-color 0.2s; }
-  .wish-item:hover { border-color: var(--border-strong); }
-  .rank-badge { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'Noto Serif TC', serif; font-weight: 700; font-size: 1rem; flex-shrink: 0; }
-  .rank-1 { background: var(--gold); color: var(--deep); }
-  .rank-2 { background: #C0C0C0; color: #3A3A3A; }
-  .rank-3 { background: #CD7F32; color: #fff; }
-  .rank-other { background: rgba(201,168,76,0.12); color: var(--muted); font-size: 0.85rem; }
-
-  .wish-info { flex: 1; min-width: 0; }
-  .wish-name { font-weight: 500; font-size: 0.95rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .wish-meta { font-size: 0.75rem; color: var(--muted); margin-top: 3px; display: flex; gap: 8px; flex-wrap: wrap; }
-  .wish-meta span { background: rgba(201,168,76,0.1); border: 1px solid var(--border); border-radius: 12px; padding: 2px 8px; }
-
-  .wish-count { display: flex; flex-direction: column; align-items: center; gap: 2px; min-width: 56px; }
-  .count-num { font-family: 'Noto Serif TC', serif; font-size: 1.3rem; color: var(--gold); font-weight: 700; line-height: 1; }
-  .count-lbl { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; }
-
-  .echo-btn { padding: 7px 14px; border: 1px solid var(--gold); border-radius: 20px; background: transparent; color: var(--gold); font-family: 'Noto Sans TC', sans-serif; font-size: 0.78rem; cursor: pointer; white-space: nowrap; transition: all 0.15s; letter-spacing: 0.05em; }
-  .echo-btn:hover { background: var(--gold); color: var(--deep); }
-
-  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(26,16,8,0.7); z-index: 200; align-items: center; justify-content: center; padding: 1.5rem; }
-  .modal-overlay.open { display: flex; }
-  .modal { background: var(--card); border: 1px solid var(--border-strong); border-radius: 14px; padding: 2rem; max-width: 440px; width: 100%; animation: fadeUp 0.2s ease; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-  .modal h3 { font-family: 'Noto Serif TC', serif; font-size: 1.1rem; color: var(--gold); margin-bottom: 0.4rem; letter-spacing: 0.08em; }
-  .modal .target-name { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; padding: 0.4rem 0.75rem; background: rgba(201,168,76,0.08); border-radius: 6px; display: inline-block; }
-  .modal-fields { display: flex; flex-direction: column; gap: 0.75rem; }
-  .modal-btns { display: flex; gap: 0.75rem; margin-top: 1.25rem; }
-  .btn-cancel { flex: 1; padding: 10px; background: none; border: 1px solid var(--border-strong); border-radius: 8px; color: var(--muted); font-family: 'Noto Sans TC', sans-serif; font-size: 0.9rem; cursor: pointer; }
-  .btn-confirm { flex: 2; padding: 10px; background: var(--gold); border: none; border-radius: 8px; color: var(--deep); font-family: 'Noto Serif TC', serif; font-size: 0.95rem; font-weight: 700; cursor: pointer; letter-spacing: 0.08em; transition: all 0.15s; }
-  .btn-confirm:hover { background: var(--gold-light); }
-  .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
-
-  .refresh-btn { display: flex; align-items: center; gap: 6px; margin-left: auto; margin-bottom: 1rem; padding: 6px 14px; background: none; border: 1px solid var(--border-strong); border-radius: 20px; color: var(--muted); font-size: 0.78rem; cursor: pointer; font-family: 'Noto Sans TC', sans-serif; transition: all 0.15s; }
-  .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
-  .empty-state { text-align: center; padding: 3rem; color: var(--muted); font-size: 0.9rem; }
-  .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
-  .notice { background: rgba(201,168,76,0.07); border: 1px solid var(--border); border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.78rem; color: var(--muted); text-align: center; margin-top: 2rem; line-height: 1.6; }
-  .loading-dot { display: inline-block; animation: blink 1s infinite; }
-  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+@media (max-width: 500px) { .row2 { grid-template-columns: 1fr; } }
 </style>
 </head>
 <body>
@@ -133,23 +122,24 @@
   <div class="header-inner">
     <div class="logo">🌙 舞蹈許願池</div>
     <nav class="nav-tabs">
-      <button class="nav-tab active" onclick="switchPage('wish', this)">✨ 許願</button>
-      <button class="nav-tab" onclick="switchPage('board', this)">🏆 排行榜</button>
+      <button class="nav-tab active" id="tab-wish" onclick="showPage('wish')">✨ 許願</button>
+      <button class="nav-tab" id="tab-board" onclick="showPage('board')">🏆 排行榜</button>
     </nav>
   </div>
 </header>
 
 <!-- 許願頁 -->
 <div id="page-wish" class="page active">
-  <div class="form-hero">
+  <div class="hero">
     <div class="stars">✦ ✦ ✦</div>
     <h1>許下你的舞蹈願望</h1>
     <p>告訴我們你想學什麼，讓我們為你安排課程</p>
   </div>
   <div class="form-wrap">
+
     <div class="form-card">
-      <h2><span class="num">1</span> 學員資料</h2>
-      <div class="field-row">
+      <div class="card-title"><span class="num-badge">1</span> 學員資料</div>
+      <div class="row2">
         <div class="field">
           <label>姓名 <span class="req">*</span></label>
           <input type="text" id="f-name" placeholder="你的名字">
@@ -159,7 +149,7 @@
           <input type="tel" id="f-phone" placeholder="09xxxxxxxx">
         </div>
       </div>
-      <div class="field-row full">
+      <div class="row1">
         <div class="field">
           <label>Email <span class="req">*</span></label>
           <input type="email" id="f-email" placeholder="your@email.com">
@@ -168,11 +158,11 @@
     </div>
 
     <div class="form-card">
-      <h2><span class="num">2</span> 上課地區與時間</h2>
-      <div class="field-row full" style="margin-bottom:1.25rem">
+      <div class="card-title"><span class="num-badge">2</span> 上課地區與時間</div>
+      <div class="row1">
         <div class="field">
           <label>地區 <span class="req">*</span></label>
-          <select id="f-region" onchange="updateTimeOptions()">
+          <select id="f-region" onchange="onRegionChange()">
             <option value="">請選擇地區</option>
             <option value="台中">台中</option>
             <option value="高雄">高雄</option>
@@ -182,17 +172,17 @@
       <div class="field">
         <label>偏好時段 <span class="req">*</span></label>
         <div class="time-pills" id="time-pills">
-          <div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">請先選擇地區</div>
+          <div class="hint">請先選擇地區</div>
         </div>
       </div>
     </div>
 
     <div class="form-card">
-      <h2><span class="num">3</span> 課程許願</h2>
-      <div class="field-row full" style="margin-bottom:1rem">
+      <div class="card-title"><span class="num-badge">3</span> 課程許願</div>
+      <div class="row1">
         <div class="field">
           <label>課程類型 <span class="req">*</span></label>
-          <select id="f-type" onchange="updateCourseFields()">
+          <select id="f-type" onchange="onTypeChange()">
             <option value="">請選擇課程類型</option>
             <option value="舞蹈">舞蹈</option>
             <option value="皮拉提斯">皮拉提斯</option>
@@ -202,148 +192,132 @@
           </select>
         </div>
       </div>
-      <div class="field-row full cond-field" id="field-song">
+      <div class="cond" id="cond-song">
         <div class="field">
-          <label>歌曲名稱 <span class="req">*</span> <span style="font-size:0.72rem;color:var(--muted)">(想學哪首歌的舞？)</span></label>
+          <label>歌曲名稱 <span class="req">*</span>　<span style="font-size:0.72rem;color:var(--muted)">想學哪首歌的舞？</span></label>
           <input type="text" id="f-song" placeholder="例：Love Story、Dynamite...">
         </div>
       </div>
-      <div class="field-row full cond-field" id="field-custom">
+      <div class="cond" id="cond-custom">
         <div class="field">
-          <label>課程名稱 <span class="req">*</span> <span style="font-size:0.72rem;color:var(--muted)">(請描述你想學的內容)</span></label>
+          <label>課程名稱 <span class="req">*</span>　<span style="font-size:0.72rem;color:var(--muted)">請描述你想學的內容</span></label>
           <input type="text" id="f-custom" placeholder="請填寫你想要的課程內容">
         </div>
       </div>
     </div>
 
-    <button class="submit-btn" id="submit-btn" onclick="submitWish()">🌟 送出許願</button>
-    <div class="success-msg" id="success-msg">
-      <div class="icon">🎉</div>
+    <button class="submit-btn" id="submit-btn" onclick="doSubmitWish()">🌟 送出許願</button>
+    <div class="success-box" id="success-box">
+      <div class="ico">🎉</div>
       <p>許願成功！我們收到你的願望了<br><span style="font-size:0.85rem;opacity:0.8">有課程開班時我們會通知你</span></p>
     </div>
+
   </div>
 </div>
 
 <!-- 排行榜頁 -->
 <div id="page-board" class="page">
-  <div class="lb-hero">
-    <div class="stars" style="font-size:1.2rem;opacity:0.7;letter-spacing:0.3em;margin-bottom:0.8rem">✦ ✦ ✦</div>
+  <div class="hero">
+    <div class="stars" style="font-size:1.1rem;opacity:0.6">✦ ✦ ✦</div>
     <h1>許願池排行榜</h1>
     <p>看看大家都在許什麼願 — 點「附和」讓我們知道你也想學</p>
   </div>
   <div class="lb-wrap">
-    <div class="lb-stats">
-      <div class="stat-card"><div class="val" id="stat-total">—</div><div class="lbl">總許願數</div></div>
-      <div class="stat-card"><div class="val" id="stat-songs">—</div><div class="lbl">不同課程/歌曲</div></div>
-      <div class="stat-card"><div class="val" id="stat-top">—</div><div class="lbl">最高呼聲</div></div>
+    <div class="stats-grid">
+      <div class="stat-box"><div class="stat-val" id="s-total">—</div><div class="stat-lbl">總許願數</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-items">—</div><div class="stat-lbl">不同課程/歌曲</div></div>
+      <div class="stat-box"><div class="stat-val" id="s-top">—</div><div class="stat-lbl">最高呼聲</div></div>
     </div>
-    <div style="display:flex;align-items:center">
-      <div class="lb-section-title" style="flex:1">🏅 課程 / 歌曲排行</div>
-      <button class="refresh-btn" onclick="loadLeaderboard()">↻ 重新整理</button>
+    <div class="sec-header">
+      <div class="sec-title">🏅 課程 / 歌曲排行</div>
+      <button class="refresh-btn" onclick="loadBoard()">↻ 重新整理</button>
     </div>
-    <div id="lb-list">
-      <div class="empty-state"><div class="icon">🌙</div><div>載入中...</div></div>
-    </div>
+    <div id="lb-list"><div class="empty"><div class="ico">🌙</div><div>載入中...</div></div></div>
     <div class="notice">ℹ️ 此頁面不顯示任何個人資料，僅顯示許願與附和的人數統計</div>
   </div>
 </div>
 
 <!-- 附和 Modal -->
-<div class="modal-overlay" id="modal" onclick="closeModalOverlay(event)">
+<div class="overlay" id="overlay" onclick="onOverlayClick(event)">
   <div class="modal">
     <h3>🔔 我也想學！</h3>
-    <div class="target-name" id="modal-target">—</div>
+    <div class="modal-target" id="modal-name">—</div>
     <div class="modal-fields">
-      <div class="field">
-        <label>姓名 <span class="req">*</span></label>
-        <input type="text" id="m-name" placeholder="你的名字">
-      </div>
-      <div class="field">
-        <label>電話 <span class="req">*</span></label>
-        <input type="tel" id="m-phone" placeholder="09xxxxxxxx">
-      </div>
-      <div class="field">
-        <label>Email <span class="req">*</span></label>
-        <input type="email" id="m-email" placeholder="your@email.com">
-      </div>
+      <div class="field"><label>姓名 <span class="req">*</span></label><input type="text" id="m-name" placeholder="你的名字"></div>
+      <div class="field"><label>電話 <span class="req">*</span></label><input type="tel" id="m-phone" placeholder="09xxxxxxxx"></div>
+      <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="m-email" placeholder="your@email.com"></div>
     </div>
     <div class="modal-btns">
-      <button class="btn-cancel" onclick="closeModal()">取消</button>
-      <button class="btn-confirm" id="modal-confirm" onclick="submitEcho()">確認附和</button>
+      <button class="btn-cancel" onclick="closeOverlay()">取消</button>
+      <button class="btn-ok" id="btn-ok" onclick="doSubmitEcho()">確認附和</button>
     </div>
   </div>
 </div>
 
 <script>
-// ══════════════════════════════════════════
-// ★ 填入你的 GAS 部署網址
-// ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec';
+var GAS_URL = 'https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec';
+var echoWishId = null;
 
-// ══════════════════════════════════════════
-// 頁面切換
-// ══════════════════════════════════════════
-function switchPage(page, btn) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  btn.classList.add('active');
-  if (page === 'board') loadLeaderboard();
+// ── 頁面切換 ──
+function showPage(name) {
+  document.getElementById('page-wish').classList.remove('active');
+  document.getElementById('page-board').classList.remove('active');
+  document.getElementById('tab-wish').classList.remove('active');
+  document.getElementById('tab-board').classList.remove('active');
+  document.getElementById('page-' + name).classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+  if (name === 'board') loadBoard();
 }
 
-// ══════════════════════════════════════════
-// 時段選擇
-// ══════════════════════════════════════════
-const timeOptions = {
+// ── 地區選擇 ──
+var timeslots = {
   '台中': ['周日下午 4:00','周日下午 5:00','周日下午 6:00','周日下午 7:00','周日下午 8:00'],
   '高雄': ['周三晚上 8:30','周三晚上 9:00','周三晚上 9:30','周三晚上 10:00']
 };
 
-function updateTimeOptions() {
-  const region = document.getElementById('f-region').value;
-  const container = document.getElementById('time-pills');
-  container.innerHTML = '';
+function onRegionChange() {
+  var region = document.getElementById('f-region').value;
+  var box = document.getElementById('time-pills');
+  box.innerHTML = '';
   if (!region) {
-    container.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">請先選擇地區</div>';
+    box.innerHTML = '<div class="hint">請先選擇地區</div>';
     return;
   }
-  timeOptions[region].forEach(t => {
-    const pill = document.createElement('label');
+  var slots = timeslots[region];
+  for (var i = 0; i < slots.length; i++) {
+    var pill = document.createElement('div');
     pill.className = 'time-pill';
-    pill.innerHTML = '<input type="checkbox" value="' + t + '" onchange="syncPill(this)"> ' + t;
-    container.appendChild(pill);
-  });
-}
-
-function syncPill(cb) {
-  cb.parentElement.classList.toggle('selected', cb.checked);
+    pill.textContent = slots[i];
+    pill.setAttribute('data-val', slots[i]);
+    pill.onclick = function() { this.classList.toggle('on'); };
+    box.appendChild(pill);
+  }
 }
 
 function getSelectedTimes() {
-  return [...document.querySelectorAll('#time-pills input:checked')].map(i => i.value);
+  var pills = document.querySelectorAll('#time-pills .time-pill.on');
+  var vals = [];
+  for (var i = 0; i < pills.length; i++) vals.push(pills[i].getAttribute('data-val'));
+  return vals;
 }
 
-// ══════════════════════════════════════════
-// 課程類型條件欄位
-// ══════════════════════════════════════════
-function updateCourseFields() {
-  const v = document.getElementById('f-type').value;
-  document.getElementById('field-song').classList.toggle('show', v === '舞蹈');
-  document.getElementById('field-custom').classList.toggle('show', v === '其他');
+// ── 課程類型 ──
+function onTypeChange() {
+  var v = document.getElementById('f-type').value;
+  document.getElementById('cond-song').className = 'cond' + (v === '舞蹈' ? ' show' : '');
+  document.getElementById('cond-custom').className = 'cond' + (v === '其他' ? ' show' : '');
 }
 
-// ══════════════════════════════════════════
-// 送出許願（用 Image 發送，繞過 CORS）
-// ══════════════════════════════════════════
-function submitWish() {
-  const name = document.getElementById('f-name').value.trim();
-  const phone = document.getElementById('f-phone').value.trim();
-  const email = document.getElementById('f-email').value.trim();
-  const region = document.getElementById('f-region').value;
-  const times = getSelectedTimes();
-  const type = document.getElementById('f-type').value;
-  const song = document.getElementById('f-song').value.trim();
-  const custom = document.getElementById('f-custom').value.trim();
+// ── 送出許願 ──
+function doSubmitWish() {
+  var name = document.getElementById('f-name').value.trim();
+  var phone = document.getElementById('f-phone').value.trim();
+  var email = document.getElementById('f-email').value.trim();
+  var region = document.getElementById('f-region').value;
+  var times = getSelectedTimes();
+  var type = document.getElementById('f-type').value;
+  var song = document.getElementById('f-song').value.trim();
+  var custom = document.getElementById('f-custom').value.trim();
 
   if (!name || !phone || !email || !region || times.length === 0 || !type) {
     alert('請填寫所有必填欄位，並選擇偏好時段');
@@ -352,169 +326,148 @@ function submitWish() {
   if (type === '舞蹈' && !song) { alert('請填寫歌曲名稱'); return; }
   if (type === '其他' && !custom) { alert('請填寫課程名稱'); return; }
 
-  const courseName = type === '舞蹈' ? song : (type === '其他' ? custom : type);
-  const btn = document.getElementById('submit-btn');
+  var courseName = type === '舞蹈' ? song : (type === '其他' ? custom : type);
+  var btn = document.getElementById('submit-btn');
   btn.disabled = true;
   btn.textContent = '許願中…';
 
-  const params = new URLSearchParams({
-    action: 'wish',
-    name: name,
-    phone: phone,
-    email: email,
-    region: region,
-    time: times.join('、'),
-    type: type,
-    courseName: courseName,
-    timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-  });
+  var ts = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+  var url = GAS_URL + '?action=wish'
+    + '&name=' + encodeURIComponent(name)
+    + '&phone=' + encodeURIComponent(phone)
+    + '&email=' + encodeURIComponent(email)
+    + '&region=' + encodeURIComponent(region)
+    + '&time=' + encodeURIComponent(times.join('、'))
+    + '&type=' + encodeURIComponent(type)
+    + '&courseName=' + encodeURIComponent(courseName)
+    + '&timestamp=' + encodeURIComponent(ts);
 
-  const img = new Image();
+  var img = new Image();
   img.onload = img.onerror = function() {
-    document.getElementById('success-msg').style.display = 'block';
+    document.getElementById('success-box').style.display = 'block';
     btn.style.display = 'none';
-    document.querySelectorAll('#page-wish input, #page-wish select').forEach(el => el.value = '');
-    document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
-    document.querySelectorAll('.cond-field').forEach(f => f.classList.remove('show'));
   };
-  img.src = GAS_URL + '?' + params.toString();
-
-  // 若 5 秒內沒反應也直接顯示成功（GAS 已收到只是不回應圖片）
+  img.src = url;
   setTimeout(function() {
-    if (btn.style.display !== 'none') {
-      document.getElementById('success-msg').style.display = 'block';
-      btn.style.display = 'none';
-    }
-  }, 5000);
+    document.getElementById('success-box').style.display = 'block';
+    btn.style.display = 'none';
+  }, 4000);
 }
 
-// ══════════════════════════════════════════
-// 排行榜（用 JSONP，繞過 CORS）
-// ══════════════════════════════════════════
-function loadLeaderboard() {
-  document.getElementById('lb-list').innerHTML =
-    '<div class="empty-state"><div class="icon">🌙</div><div>載入中 <span class="loading-dot">.</span></div></div>';
-
-  const callbackName = 'lb_cb_' + Date.now();
-  const script = document.createElement('script');
-  script.src = GAS_URL + '?action=leaderboard&callback=' + callbackName;
-
-  window[callbackName] = function(data) {
-    renderLeaderboard(Array.isArray(data) ? data : []);
-    delete window[callbackName];
-    if (script.parentNode) script.parentNode.removeChild(script);
+// ── 排行榜 ──
+function loadBoard() {
+  document.getElementById('lb-list').innerHTML = '<div class="empty"><div class="ico">🌙</div><div>載入中...</div></div>';
+  var cbName = 'cb_' + Date.now();
+  var s = document.createElement('script');
+  s.src = GAS_URL + '?action=leaderboard&callback=' + cbName;
+  window[cbName] = function(data) {
+    renderBoard(Array.isArray(data) ? data : []);
+    delete window[cbName];
+    if (s.parentNode) s.parentNode.removeChild(s);
   };
-
-  script.onerror = function() {
-    document.getElementById('lb-list').innerHTML =
-      '<div class="empty-state"><div class="icon">⚠️</div><div>載入失敗，請重新整理</div></div>';
-    if (script.parentNode) script.parentNode.removeChild(script);
+  s.onerror = function() {
+    document.getElementById('lb-list').innerHTML = '<div class="empty"><div class="ico">⚠️</div><div>載入失敗，請點重新整理</div></div>';
+    if (s.parentNode) s.parentNode.removeChild(s);
   };
-
-  document.head.appendChild(script);
+  document.head.appendChild(s);
 }
 
-function renderLeaderboard(data) {
-  if (!data || data.length === 0) {
-    document.getElementById('lb-list').innerHTML =
-      '<div class="empty-state"><div class="icon">🌙</div><div>還沒有人許願，成為第一個吧！</div></div>';
-    document.getElementById('stat-total').textContent = '0';
-    document.getElementById('stat-songs').textContent = '0';
-    document.getElementById('stat-top').textContent = '0';
+function renderBoard(data) {
+  if (!data.length) {
+    document.getElementById('lb-list').innerHTML = '<div class="empty"><div class="ico">🌙</div><div>還沒有人許願，成為第一個吧！</div></div>';
+    document.getElementById('s-total').textContent = '0';
+    document.getElementById('s-items').textContent = '0';
+    document.getElementById('s-top').textContent = '0';
     return;
   }
+  data.sort(function(a,b){ return (b.wishCount+b.echoCount)-(a.wishCount+a.echoCount); });
+  var grand = 0;
+  for (var i=0;i<data.length;i++) grand += data[i].wishCount + data[i].echoCount;
+  document.getElementById('s-total').textContent = grand;
+  document.getElementById('s-items').textContent = data.length;
+  document.getElementById('s-top').textContent = data[0].wishCount + data[0].echoCount;
 
-  data.sort((a, b) => (b.wishCount + b.echoCount) - (a.wishCount + a.echoCount));
-
-  const total = data.reduce((s, i) => s + i.wishCount + i.echoCount, 0);
-  document.getElementById('stat-total').textContent = total;
-  document.getElementById('stat-songs').textContent = data.length;
-  document.getElementById('stat-top').textContent = data[0].wishCount + data[0].echoCount;
-
-  document.getElementById('lb-list').innerHTML = data.map(function(item, idx) {
-    const rank = idx + 1;
-    const rankClass = rank <= 3 ? 'rank-' + rank : 'rank-other';
-    const total = item.wishCount + item.echoCount;
-    const safeId = String(item.id).replace(/'/g, "\\'");
-    const safeName = String(item.courseName).replace(/'/g, "\\'");
-    return '<div class="wish-item">' +
-      '<div class="rank-badge ' + rankClass + '">' + rank + '</div>' +
-      '<div class="wish-info">' +
-        '<div class="wish-name">' + item.courseName + '</div>' +
-        '<div class="wish-meta">' +
-          '<span>' + item.type + '</span>' +
-          '<span>' + (item.region || '全區') + '</span>' +
-          '<span>許願 ' + item.wishCount + ' · 附和 ' + item.echoCount + '</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="wish-count"><div class="count-num">' + total + '</div><div class="count-lbl">總聲援</div></div>' +
-      '<button class="echo-btn" onclick="openModal(\'' + safeId + '\',\'' + safeName + '\')">附和</button>' +
-    '</div>';
-  }).join('');
+  var html = '';
+  for (var i=0;i<data.length;i++) {
+    var item = data[i];
+    var rank = i+1;
+    var rc = rank===1?'r1':rank===2?'r2':rank===3?'r3':'rn';
+    var tot = item.wishCount + item.echoCount;
+    html += '<div class="wish-card">'
+      + '<div class="rank-circle ' + rc + '">' + rank + '</div>'
+      + '<div class="wish-info">'
+        + '<div class="wish-name">' + escHtml(item.courseName) + '</div>'
+        + '<div class="wish-tags">'
+          + '<span class="tag">' + escHtml(item.type) + '</span>'
+          + '<span class="tag">' + escHtml(item.region||'全區') + '</span>'
+          + '<span class="tag">許願 ' + item.wishCount + ' · 附和 ' + item.echoCount + '</span>'
+        + '</div>'
+      + '</div>'
+      + '<div class="total-count"><div class="total-num">' + tot + '</div><div class="total-lbl">總聲援</div></div>'
+      + '<button class="echo-btn" onclick="openEcho(\'' + escAttr(item.id) + '\',\'' + escAttr(item.courseName) + '\')">附和</button>'
+      + '</div>';
+  }
+  document.getElementById('lb-list').innerHTML = html;
 }
 
-// ══════════════════════════════════════════
-// 附和 Modal
-// ══════════════════════════════════════════
-var currentEchoId = null;
+function escHtml(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escAttr(s) {
+  return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+}
 
-function openModal(id, name) {
-  currentEchoId = id;
-  document.getElementById('modal-target').textContent = '「' + name + '」';
+// ── 附和 ──
+function openEcho(id, name) {
+  echoWishId = id;
+  document.getElementById('modal-name').textContent = '「' + name + '」';
   document.getElementById('m-name').value = '';
   document.getElementById('m-phone').value = '';
   document.getElementById('m-email').value = '';
-  document.getElementById('modal-confirm').disabled = false;
-  document.getElementById('modal-confirm').textContent = '確認附和';
-  document.getElementById('modal').classList.add('open');
+  var btn = document.getElementById('btn-ok');
+  btn.disabled = false;
+  btn.textContent = '確認附和';
+  document.getElementById('overlay').classList.add('open');
 }
 
-function closeModal() {
-  document.getElementById('modal').classList.remove('open');
+function closeOverlay() {
+  document.getElementById('overlay').classList.remove('open');
 }
 
-function closeModalOverlay(event) {
-  if (event.target === document.getElementById('modal')) closeModal();
+function onOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeOverlay();
 }
 
-function submitEcho() {
-  const name = document.getElementById('m-name').value.trim();
-  const phone = document.getElementById('m-phone').value.trim();
-  const email = document.getElementById('m-email').value.trim();
+function doSubmitEcho() {
+  var name = document.getElementById('m-name').value.trim();
+  var phone = document.getElementById('m-phone').value.trim();
+  var email = document.getElementById('m-email').value.trim();
   if (!name || !phone || !email) { alert('請填寫完整資料'); return; }
 
-  const btn = document.getElementById('modal-confirm');
+  var btn = document.getElementById('btn-ok');
   btn.disabled = true;
   btn.textContent = '附和中…';
 
-  const params = new URLSearchParams({
-    action: 'echo',
-    wishId: currentEchoId,
-    name: name,
-    phone: phone,
-    email: email,
-    timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-  });
+  var ts = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+  var url = GAS_URL + '?action=echo'
+    + '&wishId=' + encodeURIComponent(echoWishId)
+    + '&name=' + encodeURIComponent(name)
+    + '&phone=' + encodeURIComponent(phone)
+    + '&email=' + encodeURIComponent(email)
+    + '&timestamp=' + encodeURIComponent(ts);
 
-  const img = new Image();
+  var img = new Image();
   img.onload = img.onerror = function() {
     btn.textContent = '✓ 附和成功！';
-    setTimeout(function() {
-      closeModal();
-      loadLeaderboard();
-    }, 1000);
+    setTimeout(function() { closeOverlay(); loadBoard(); }, 1000);
   };
-  img.src = GAS_URL + '?' + params.toString();
-
+  img.src = url;
   setTimeout(function() {
     if (btn.textContent === '附和中…') {
       btn.textContent = '✓ 附和成功！';
-      setTimeout(function() {
-        closeModal();
-        loadLeaderboard();
-      }, 1000);
+      setTimeout(function() { closeOverlay(); loadBoard(); }, 1000);
     }
-  }, 5000);
+  }, 4000);
 }
 </script>
 </body>
