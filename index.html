@@ -718,7 +718,7 @@
 // ══════════════════════════════════════════
 // CONFIG — 填入你的 GAS 網址
 // ══════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec';
+const GAS_URL = 'https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec'; // ← 填入你的部署網址
 
 // ══════════════════════════════════════════
 // Page switching
@@ -810,9 +810,7 @@ async function submitWish() {
   try {
     await fetch(GAS_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: new URLSearchParams(payload)
     });
     document.getElementById('success-msg').style.display = 'block';
     btn.style.display = 'none';
@@ -945,9 +943,7 @@ async function submitEcho() {
   try {
     await fetch(GAS_URL, {
       method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
+      body: new URLSearchParams(payload)
     });
     btn.textContent = '✓ 附和成功！';
     setTimeout(() => {
