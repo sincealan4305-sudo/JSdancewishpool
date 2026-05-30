@@ -833,17 +833,21 @@ let currentEchoId = null;
 
 async function loadLeaderboard() {
   document.getElementById('lb-list').innerHTML = `
-    <div class="empty-state"><div class="icon">🌙</div><div>載入中 <span class="loading-dot">.</span></div></div>
+    <div class="empty-state"><div class="icon">🌙</div><div>載入中...</div></div>
   `;
-
-  try {
-    const res = await fetch(GAS_URL + '?action=leaderboard');
-    const data = await res.json();
+  const callbackName = 'lb_' + Date.now();
+  const script = document.createElement('script');
+  script.src = GAS_URL + '?action=leaderboard&callback=' + callbackName;
+  window[callbackName] = function(data) {
     renderLeaderboard(data);
-  } catch (e) {
-    // Demo mode if GAS not connected
-    renderLeaderboard(getDemoData());
-  }
+    delete window[callbackName];
+    document.head.removeChild(script);
+  };
+  script.onerror = function() {
+    renderLeaderboard([]);
+  };
+  document.head.appendChild(script);
+}
 }
 
 function getDemoData() {
