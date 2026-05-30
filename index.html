@@ -798,25 +798,27 @@ async function submitWish() {
   btn.disabled = true;
   btn.textContent = '許願中…';
 
-  const payload = {
+  const params = new URLSearchParams({
     action: 'wish',
     name, phone, email, region,
     time: times.join('、'),
     type,
     courseName,
     timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-  };
+  });
 
   try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      body: new URLSearchParams(payload)
-    });
-    document.getElementById('success-msg').style.display = 'block';
-    btn.style.display = 'none';
-    document.querySelectorAll('#page-wish input, #page-wish select').forEach(el => el.value = '');
-    document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
-    document.querySelectorAll('.cond-field').forEach(f => f.classList.remove('show'));
+    const res = await fetch(GAS_URL + '?' + params.toString());
+    const result = await res.json();
+    if (result.status === 'ok') {
+      document.getElementById('success-msg').style.display = 'block';
+      btn.style.display = 'none';
+      document.querySelectorAll('#page-wish input, #page-wish select').forEach(el => el.value = '');
+      document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
+      document.querySelectorAll('.cond-field').forEach(f => f.classList.remove('show'));
+    } else {
+      throw new Error(result.message);
+    }
   } catch (e) {
     alert('送出時發生錯誤，請稍後再試');
     btn.disabled = false;
@@ -933,23 +935,25 @@ async function submitEcho() {
   btn.disabled = true;
   btn.textContent = '附和中…';
 
-  const payload = {
+  const params = new URLSearchParams({
     action: 'echo',
     wishId: currentEchoId,
     name, phone, email,
     timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
-  };
+  });
 
   try {
-    await fetch(GAS_URL, {
-      method: 'POST',
-      body: new URLSearchParams(payload)
-    });
-    btn.textContent = '✓ 附和成功！';
-    setTimeout(() => {
-      document.getElementById('modal').classList.remove('open');
-      loadLeaderboard();
-    }, 1000);
+    const res = await fetch(GAS_URL + '?' + params.toString());
+    const result = await res.json();
+    if (result.status === 'ok') {
+      btn.textContent = '✓ 附和成功！';
+      setTimeout(() => {
+        document.getElementById('modal').classList.remove('open');
+        loadLeaderboard();
+      }, 1000);
+    } else {
+      throw new Error(result.message);
+    }
   } catch (e) {
     alert('送出時發生錯誤，請稍後再試');
     btn.disabled = false;
