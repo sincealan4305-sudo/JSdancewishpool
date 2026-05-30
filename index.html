@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>舞蹈許願池 ✨</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #C9A84C;
+    --gold-light: #F0D98A;
+    --gold-pale: #FDF6E3;
+    --deep: #1A1008;
+    --ink: #2D1F0A;
+    --muted: #8B7355;
+    --surface: #FBF5E8;
+    --card: #FFFDF5;
+    --border: rgba(201,168,76,0.25);
+    --border-strong: rgba(201,168,76,0.6);
+    --success: #2E7D32;
+    --success-bg: #E8F5E9;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Noto Sans TC', sans-serif;
+    background: var(--surface);
+    color: var(--ink);
+    min-height: 100vh;
+  }
+
+  /* Header */
+  .site-header {
+    background: var(--deep);
+    padding: 0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 1px solid var(--gold);
+  }
+  .header-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+    height: 60px;
+  }
+  .logo {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.15rem;
+    color: var(--gold-light);
+    letter-spacing: 0.08em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .logo span { font-size: 1.4rem; }
+  .nav-tabs {
+    display: flex;
+    gap: 0;
+    height: 60px;
+  }
+  .nav-tab {
+    padding: 0 1.5rem;
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all 0.2s;
+    letter-spacing: 0.05em;
+    background: none;
+    border-top: none;
+    border-left: none;
+    border-right: none;
+  }
+  .nav-tab:hover { color: var(--gold-light); }
+  .nav-tab.active {
+    color: var(--gold-light);
+    border-bottom-color: var(--gold);
+  }
+
+  /* Pages */
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── WISH FORM PAGE ── */
+  .form-hero {
+    background: linear-gradient(135deg, var(--deep) 0%, #2D1F0A 100%);
+    padding: 3.5rem 2rem 2.5rem;
+    text-align: center;
+  }
+  .form-hero h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 2rem;
+    color: var(--gold-light);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.5rem;
+  }
+  .form-hero p {
+    color: rgba(240,217,138,0.65);
+    font-size: 0.9rem;
+    letter-spacing: 0.06em;
+  }
+  .form-hero .stars {
+    font-size: 1.4rem;
+    letter-spacing: 0.3em;
+    margin-bottom: 1rem;
+    opacity: 0.8;
+  }
+
+  .form-wrap {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 2.5rem 2rem 4rem;
+  }
+
+  .form-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2rem;
+    margin-bottom: 1.25rem;
+  }
+  .form-card h2 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .form-card h2 .num {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background: var(--gold);
+    color: var(--deep);
+    font-size: 0.7rem;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1rem;
+  }
+  .field-row.full { grid-template-columns: 1fr; }
+  @media (max-width: 500px) { .field-row { grid-template-columns: 1fr; } }
+
+  .field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .field label {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: var(--muted);
+    letter-spacing: 0.06em;
+  }
+  .field label .req { color: var(--gold); margin-left: 2px; }
+
+  .field input,
+  .field select,
+  .field textarea {
+    padding: 10px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.9rem;
+    color: var(--ink);
+    background: #FFFEF9;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    appearance: none;
+    -webkit-appearance: none;
+  }
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+  .field select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%238B7355' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding-right: 34px;
+  }
+
+  /* Time options */
+  .time-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 2px;
+  }
+  .time-pill {
+    padding: 8px 14px;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    font-size: 0.82rem;
+    color: var(--muted);
+    cursor: pointer;
+    transition: all 0.15s;
+    background: #FFFEF9;
+    user-select: none;
+  }
+  .time-pill:hover { border-color: var(--gold); color: var(--ink); }
+  .time-pill.selected {
+    background: var(--gold);
+    border-color: var(--gold);
+    color: var(--deep);
+    font-weight: 500;
+  }
+  .time-pill input { display: none; }
+
+  /* Conditional fields */
+  .cond-field {
+    display: none;
+    animation: slideDown 0.2s ease;
+  }
+  .cond-field.show { display: flex; }
+  @keyframes slideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Submit button */
+  .submit-btn {
+    width: 100%;
+    padding: 14px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--deep);
+    cursor: pointer;
+    letter-spacing: 0.15em;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .submit-btn:hover { background: var(--gold-light); transform: translateY(-1px); }
+  .submit-btn:active { transform: translateY(0); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+
+  /* Success message */
+  .success-msg {
+    display: none;
+    background: var(--success-bg);
+    border: 1px solid #A5D6A7;
+    border-radius: 10px;
+    padding: 1.5rem;
+    text-align: center;
+    margin-top: 1rem;
+  }
+  .success-msg .icon { font-size: 2rem; margin-bottom: 8px; }
+  .success-msg p { color: var(--success); font-weight: 500; font-size: 0.95rem; }
+
+  /* ── LEADERBOARD PAGE ── */
+  .lb-hero {
+    background: linear-gradient(135deg, #1A1008 0%, #2D1F0A 60%, #1A1008 100%);
+    padding: 3rem 2rem 2rem;
+    text-align: center;
+  }
+  .lb-hero h1 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.8rem;
+    color: var(--gold-light);
+    letter-spacing: 0.12em;
+    margin-bottom: 0.4rem;
+  }
+  .lb-hero p { color: rgba(240,217,138,0.6); font-size: 0.85rem; letter-spacing: 0.05em; }
+
+  .lb-wrap {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
+  }
+
+  .lb-stats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-bottom: 2rem;
+  }
+  .stat-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1rem;
+    text-align: center;
+  }
+  .stat-card .val {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.8rem;
+    color: var(--gold);
+    font-weight: 700;
+  }
+  .stat-card .lbl {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+    letter-spacing: 0.05em;
+  }
+
+  .lb-section-title {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .wish-item {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1.1rem 1.25rem;
+    margin-bottom: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .wish-item:hover { border-color: var(--border-strong); box-shadow: 0 2px 12px rgba(201,168,76,0.08); }
+
+  .rank-badge {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif TC', serif;
+    font-weight: 700;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+  .rank-1 { background: var(--gold); color: var(--deep); }
+  .rank-2 { background: #C0C0C0; color: #3A3A3A; }
+  .rank-3 { background: #CD7F32; color: #fff; }
+  .rank-other { background: rgba(201,168,76,0.12); color: var(--muted); font-size: 0.85rem; }
+
+  .wish-info { flex: 1; min-width: 0; }
+  .wish-name {
+    font-weight: 500;
+    font-size: 0.95rem;
+    color: var(--ink);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .wish-meta {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 3px;
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .wish-meta span {
+    background: rgba(201,168,76,0.1);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 2px 8px;
+    letter-spacing: 0.03em;
+  }
+
+  .wish-count {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+    min-width: 56px;
+  }
+  .count-num {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.3rem;
+    color: var(--gold);
+    font-weight: 700;
+    line-height: 1;
+  }
+  .count-lbl { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.05em; }
+
+  .echo-btn {
+    padding: 7px 14px;
+    border: 1px solid var(--gold);
+    border-radius: 20px;
+    background: transparent;
+    color: var(--gold);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.78rem;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s;
+    letter-spacing: 0.05em;
+  }
+  .echo-btn:hover { background: var(--gold); color: var(--deep); }
+  .echo-btn.echoed { background: var(--gold); color: var(--deep); }
+
+  /* Echo Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26,16,8,0.7);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: var(--card);
+    border: 1px solid var(--border-strong);
+    border-radius: 14px;
+    padding: 2rem;
+    max-width: 440px;
+    width: 100%;
+    animation: fadeUp 0.2s ease;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .modal h3 {
+    font-family: 'Noto Serif TC', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+    letter-spacing: 0.08em;
+  }
+  .modal .target-name {
+    font-size: 0.85rem;
+    color: var(--muted);
+    margin-bottom: 1.5rem;
+    padding: 0.4rem 0.75rem;
+    background: rgba(201,168,76,0.08);
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .modal-fields { display: flex; flex-direction: column; gap: 0.75rem; }
+  .modal-btns {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+  .btn-cancel {
+    flex: 1;
+    padding: 10px;
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 8px;
+    color: var(--muted);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+  .btn-cancel:hover { border-color: var(--muted); }
+  .btn-confirm {
+    flex: 2;
+    padding: 10px;
+    background: var(--gold);
+    border: none;
+    border-radius: 8px;
+    color: var(--deep);
+    font-family: 'Noto Serif TC', serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    letter-spacing: 0.08em;
+    transition: all 0.15s;
+  }
+  .btn-confirm:hover { background: var(--gold-light); }
+  .btn-confirm:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .loading-dot {
+    display: inline-block;
+    animation: blink 1s infinite;
+  }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+
+  .empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 0.9rem;
+    letter-spacing: 0.05em;
+  }
+  .empty-state .icon { font-size: 2.5rem; margin-bottom: 1rem; opacity: 0.5; }
+
+  .refresh-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-left: auto;
+    margin-bottom: 1rem;
+    padding: 6px 14px;
+    background: none;
+    border: 1px solid var(--border-strong);
+    border-radius: 20px;
+    color: var(--muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    font-family: 'Noto Sans TC', sans-serif;
+    transition: all 0.15s;
+  }
+  .refresh-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+  .notice {
+    background: rgba(201,168,76,0.07);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.75rem 1rem;
+    font-size: 0.78rem;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 2rem;
+    line-height: 1.6;
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <div class="header-inner">
+    <div class="logo"><span>🌙</span> 舞蹈許願池</div>
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="switchPage('wish')">✨ 許願</button>
+      <button class="nav-tab" onclick="switchPage('board')">🏆 排行榜</button>
+    </nav>
+  </div>
+</header>
+
+<!-- ═══════════════ WISH FORM PAGE ═══════════════ -->
+<div id="page-wish" class="page active">
+  <div class="form-hero">
+    <div class="stars">✦ ✦ ✦</div>
+    <h1>許下你的舞蹈願望</h1>
+    <p>告訴我們你想學什麼，讓我們為你安排課程</p>
+  </div>
+
+  <div class="form-wrap">
+    <!-- 基本資料 -->
+    <div class="form-card">
+      <h2><span class="num">1</span> 學員資料</h2>
+      <div class="field-row">
+        <div class="field">
+          <label>姓名 <span class="req">*</span></label>
+          <input type="text" id="f-name" placeholder="你的名字">
+        </div>
+        <div class="field">
+          <label>電話 <span class="req">*</span></label>
+          <input type="tel" id="f-phone" placeholder="09xxxxxxxx">
+        </div>
+      </div>
+      <div class="field-row full">
+        <div class="field">
+          <label>Email <span class="req">*</span></label>
+          <input type="email" id="f-email" placeholder="your@email.com">
+        </div>
+      </div>
+    </div>
+
+    <!-- 地區 + 時間 -->
+    <div class="form-card">
+      <h2><span class="num">2</span> 上課地區與時間</h2>
+      <div class="field-row full" style="margin-bottom:1.25rem">
+        <div class="field">
+          <label>地區 <span class="req">*</span></label>
+          <select id="f-region" onchange="updateTimeOptions()">
+            <option value="">請選擇地區</option>
+            <option value="台中">台中</option>
+            <option value="高雄">高雄</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field">
+        <label>偏好時段 <span class="req">*</span></label>
+        <div class="time-pills" id="time-pills">
+          <div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">請先選擇地區</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 課程 -->
+    <div class="form-card">
+      <h2><span class="num">3</span> 課程許願</h2>
+      <div class="field-row full" style="margin-bottom:1rem">
+        <div class="field">
+          <label>課程類型 <span class="req">*</span></label>
+          <select id="f-type" onchange="updateCourseFields()">
+            <option value="">請選擇課程類型</option>
+            <option value="舞蹈">舞蹈</option>
+            <option value="皮拉提斯">皮拉提斯</option>
+            <option value="體態雕塑">體態雕塑</option>
+            <option value="表演排練">表演排練</option>
+            <option value="其他">其他</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="field-row full cond-field" id="field-song">
+        <div class="field">
+          <label>歌曲名稱 <span class="req">*</span> <span style="font-size:0.72rem;color:var(--muted)">(想學哪首歌的舞？)</span></label>
+          <input type="text" id="f-song" placeholder="例：Love Story、Dynamite...">
+        </div>
+      </div>
+
+      <div class="field-row full cond-field" id="field-custom">
+        <div class="field">
+          <label>課程名稱 <span class="req">*</span> <span style="font-size:0.72rem;color:var(--muted)">(請描述你想學的內容)</span></label>
+          <input type="text" id="f-custom" placeholder="請填寫你想要的課程內容">
+        </div>
+      </div>
+    </div>
+
+    <button class="submit-btn" id="submit-btn" onclick="submitWish()">🌟 送出許願</button>
+
+    <div class="success-msg" id="success-msg">
+      <div class="icon">🎉</div>
+      <p>許願成功！我們收到你的願望了<br><span style="font-size:0.85rem;opacity:0.8">有課程開班時我們會通知你</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════ LEADERBOARD PAGE ═══════════════ -->
+<div id="page-board" class="page">
+  <div class="lb-hero">
+    <div class="stars" style="font-size:1.2rem;opacity:0.7;letter-spacing:0.3em;margin-bottom:0.8rem">✦ ✦ ✦</div>
+    <h1>許願池排行榜</h1>
+    <p>看看大家都在許什麼願 — 點「附和」讓我們知道你也想學</p>
+  </div>
+
+  <div class="lb-wrap">
+    <div class="lb-stats" id="lb-stats">
+      <div class="stat-card">
+        <div class="val" id="stat-total">—</div>
+        <div class="lbl">總許願數</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="stat-songs">—</div>
+        <div class="lbl">不同課程/歌曲</div>
+      </div>
+      <div class="stat-card">
+        <div class="val" id="stat-top">—</div>
+        <div class="lbl">最高呼聲</div>
+      </div>
+    </div>
+
+    <div style="display:flex;align-items:center">
+      <div class="lb-section-title" style="flex:1">🏅 課程 / 歌曲排行</div>
+      <button class="refresh-btn" onclick="loadLeaderboard()">↻ 重新整理</button>
+    </div>
+
+    <div id="lb-list">
+      <div class="empty-state">
+        <div class="icon">🌙</div>
+        <div>載入中...</div>
+      </div>
+    </div>
+
+    <div class="notice">
+      ℹ️ 此頁面不顯示任何個人資料，僅顯示許願與附和的人數統計
+    </div>
+  </div>
+</div>
+
+<!-- Echo Modal -->
+<div class="modal-overlay" id="modal" onclick="closeModal(event)">
+  <div class="modal">
+    <h3>🔔 我也想學！</h3>
+    <div class="target-name" id="modal-target">—</div>
+    <div class="modal-fields">
+      <div class="field">
+        <label>姓名 <span class="req">*</span></label>
+        <input type="text" id="m-name" placeholder="你的名字">
+      </div>
+      <div class="field">
+        <label>電話 <span class="req">*</span></label>
+        <input type="tel" id="m-phone" placeholder="09xxxxxxxx">
+      </div>
+      <div class="field">
+        <label>Email <span class="req">*</span></label>
+        <input type="email" id="m-email" placeholder="your@email.com">
+      </div>
+    </div>
+    <div class="modal-btns">
+      <button class="btn-cancel" onclick="closeModal()">取消</button>
+      <button class="btn-confirm" id="modal-confirm" onclick="submitEcho()">確認附和</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ══════════════════════════════════════════
+// CONFIG — 填入你的 GAS 網址
+// ══════════════════════════════════════════
+const GAS_URL = 'https://script.google.com/macros/s/YOUR_GAS_DEPLOY_ID/exec';
+
+// ══════════════════════════════════════════
+// Page switching
+// ══════════════════════════════════════════
+function switchPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  event.currentTarget.classList.add('active');
+  if (page === 'board') loadLeaderboard();
+}
+
+// ══════════════════════════════════════════
+// Time option logic
+// ══════════════════════════════════════════
+const timeOptions = {
+  '台中': ['周日下午 4:00', '周日下午 5:00', '周日下午 6:00', '周日下午 7:00', '周日下午 8:00'],
+  '高雄': ['周三晚上 8:30', '周三晚上 9:00', '周三晚上 9:30', '周三晚上 10:00']
+};
+
+function updateTimeOptions() {
+  const region = document.getElementById('f-region').value;
+  const container = document.getElementById('time-pills');
+  container.innerHTML = '';
+  if (!region) {
+    container.innerHTML = '<div style="font-size:0.82rem;color:var(--muted);padding:8px 0;">請先選擇地區</div>';
+    return;
+  }
+  timeOptions[region].forEach(t => {
+    const pill = document.createElement('label');
+    pill.className = 'time-pill';
+    pill.innerHTML = `<input type="checkbox" value="${t}" onchange="syncPill(this)"> ${t}`;
+    container.appendChild(pill);
+  });
+}
+
+function syncPill(cb) {
+  cb.parentElement.classList.toggle('selected', cb.checked);
+}
+
+function getSelectedTimes() {
+  return [...document.querySelectorAll('#time-pills input:checked')].map(i => i.value);
+}
+
+// ══════════════════════════════════════════
+// Course type conditional fields
+// ══════════════════════════════════════════
+function updateCourseFields() {
+  const v = document.getElementById('f-type').value;
+  document.getElementById('field-song').classList.toggle('show', v === '舞蹈');
+  document.getElementById('field-custom').classList.toggle('show', v === '其他');
+}
+
+// ══════════════════════════════════════════
+// Submit wish
+// ══════════════════════════════════════════
+async function submitWish() {
+  const name = document.getElementById('f-name').value.trim();
+  const phone = document.getElementById('f-phone').value.trim();
+  const email = document.getElementById('f-email').value.trim();
+  const region = document.getElementById('f-region').value;
+  const times = getSelectedTimes();
+  const type = document.getElementById('f-type').value;
+  const song = document.getElementById('f-song').value.trim();
+  const custom = document.getElementById('f-custom').value.trim();
+
+  if (!name || !phone || !email || !region || times.length === 0 || !type) {
+    alert('請填寫所有必填欄位，並選擇偏好時段');
+    return;
+  }
+  if (type === '舞蹈' && !song) { alert('請填寫歌曲名稱'); return; }
+  if (type === '其他' && !custom) { alert('請填寫課程名稱'); return; }
+
+  const courseName = type === '舞蹈' ? song : (type === '其他' ? custom : type);
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = '許願中…';
+
+  const payload = {
+    action: 'wish',
+    name, phone, email, region,
+    time: times.join('、'),
+    type,
+    courseName,
+    timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    document.getElementById('success-msg').style.display = 'block';
+    btn.style.display = 'none';
+    document.querySelectorAll('#page-wish input, #page-wish select').forEach(el => el.value = '');
+    document.querySelectorAll('.time-pill').forEach(p => p.classList.remove('selected'));
+    document.querySelectorAll('.cond-field').forEach(f => f.classList.remove('show'));
+  } catch (e) {
+    alert('送出時發生錯誤，請稍後再試');
+    btn.disabled = false;
+    btn.textContent = '🌟 送出許願';
+  }
+}
+
+// ══════════════════════════════════════════
+// Leaderboard
+// ══════════════════════════════════════════
+let currentEchoId = null;
+
+async function loadLeaderboard() {
+  document.getElementById('lb-list').innerHTML = `
+    <div class="empty-state"><div class="icon">🌙</div><div>載入中 <span class="loading-dot">.</span></div></div>
+  `;
+
+  try {
+    const res = await fetch(GAS_URL + '?action=leaderboard');
+    const data = await res.json();
+    renderLeaderboard(data);
+  } catch (e) {
+    // Demo mode if GAS not connected
+    renderLeaderboard(getDemoData());
+  }
+}
+
+function getDemoData() {
+  return [
+    { id: '1', courseName: 'Love Story', type: '舞蹈', region: '高雄', wishCount: 8, echoCount: 5 },
+    { id: '2', courseName: 'Dynamite', type: '舞蹈', region: '台中', wishCount: 6, echoCount: 3 },
+    { id: '3', courseName: '皮拉提斯', type: '皮拉提斯', region: '高雄', wishCount: 5, echoCount: 7 },
+    { id: '4', courseName: '體態雕塑入門', type: '體態雕塑', region: '台中', wishCount: 4, echoCount: 2 },
+    { id: '5', courseName: 'Butter', type: '舞蹈', region: '高雄', wishCount: 3, echoCount: 1 },
+    { id: '6', courseName: '爵士舞基礎', type: '其他', region: '台中', wishCount: 2, echoCount: 0 },
+  ];
+}
+
+function renderLeaderboard(data) {
+  if (!data || data.length === 0) {
+    document.getElementById('lb-list').innerHTML = `
+      <div class="empty-state"><div class="icon">🌙</div><div>還沒有人許願，成為第一個吧！</div></div>
+    `;
+    return;
+  }
+
+  // Sort by total
+  data.sort((a, b) => (b.wishCount + b.echoCount) - (a.wishCount + a.echoCount));
+
+  const total = data.reduce((s, i) => s + i.wishCount + i.echoCount, 0);
+  const topCount = data[0].wishCount + data[0].echoCount;
+  document.getElementById('stat-total').textContent = total;
+  document.getElementById('stat-songs').textContent = data.length;
+  document.getElementById('stat-top').textContent = topCount;
+
+  const html = data.map((item, idx) => {
+    const rank = idx + 1;
+    const rankClass = rank <= 3 ? `rank-${rank}` : 'rank-other';
+    const rankLabel = rank <= 3 ? rank : rank;
+    const total = item.wishCount + item.echoCount;
+    return `
+      <div class="wish-item">
+        <div class="rank-badge ${rankClass}">${rankLabel}</div>
+        <div class="wish-info">
+          <div class="wish-name">${item.courseName}</div>
+          <div class="wish-meta">
+            <span>${item.type}</span>
+            <span>${item.region || '全區'}</span>
+            <span>許願 ${item.wishCount} · 附和 ${item.echoCount}</span>
+          </div>
+        </div>
+        <div class="wish-count">
+          <div class="count-num">${total}</div>
+          <div class="count-lbl">總聲援</div>
+        </div>
+        <button class="echo-btn" onclick="openModal('${item.id}','${item.courseName.replace(/'/g,"\\'")}')">
+          附和
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  document.getElementById('lb-list').innerHTML = html;
+}
+
+// ══════════════════════════════════════════
+// Echo modal
+// ══════════════════════════════════════════
+function openModal(id, name) {
+  currentEchoId = id;
+  document.getElementById('modal-target').textContent = '「' + name + '」';
+  document.getElementById('m-name').value = '';
+  document.getElementById('m-phone').value = '';
+  document.getElementById('m-email').value = '';
+  document.getElementById('modal-confirm').disabled = false;
+  document.getElementById('modal-confirm').textContent = '確認附和';
+  document.getElementById('modal').classList.add('open');
+}
+
+function closeModal(event) {
+  if (!event || event.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+}
+
+async function submitEcho() {
+  const name = document.getElementById('m-name').value.trim();
+  const phone = document.getElementById('m-phone').value.trim();
+  const email = document.getElementById('m-email').value.trim();
+
+  if (!name || !phone || !email) { alert('請填寫完整資料'); return; }
+
+  const btn = document.getElementById('modal-confirm');
+  btn.disabled = true;
+  btn.textContent = '附和中…';
+
+  const payload = {
+    action: 'echo',
+    wishId: currentEchoId,
+    name, phone, email,
+    timestamp: new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' })
+  };
+
+  try {
+    await fetch(GAS_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    btn.textContent = '✓ 附和成功！';
+    setTimeout(() => {
+      document.getElementById('modal').classList.remove('open');
+      loadLeaderboard();
+    }, 1000);
+  } catch (e) {
+    alert('送出時發生錯誤，請稍後再試');
+    btn.disabled = false;
+    btn.textContent = '確認附和';
+  }
+}
+</script>
+</body>
+</html>
