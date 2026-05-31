@@ -178,7 +178,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
     <div class="success-panel" id="success-panel">
       <div class="check">✓</div>
       <h3>願望已送出</h3>
-      <p>我們收到你的許願了。<br>有課程開班時，會第一時間通知你。</p>
+      <p>我們收到你的許願了。<br>有課程開班時，會第一時間通知你。若有任何問題請洽官方LINE。</p>
     </div>
   </div>
 </div>
@@ -202,8 +202,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
       <button class="reload-btn" onclick="loadBoard()">重新整理</button>
     </div>
     <div id="lb-list"><div class="empty-state"><div class="ico">○</div><p>載入中…</p></div></div>
-    <div class="lb-notice">此頁面不顯示任何個人資料，僅統計許願與附和人數。</div>
-  </div>
+    </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="onOverlayClick(event)">
@@ -309,17 +308,39 @@ function renderBoard(data){
   document.getElementById('s-total').textContent=grand;
   document.getElementById('s-items').textContent=data.length;
   document.getElementById('s-top').textContent=data[0].wishCount+data[0].echoCount;
+
+  // Store items in a global array, use index for onclick
+  window._boardData = data;
+
   var html='';
   for(var i=0;i<data.length;i++){
     var item=data[i],rank=i+1,rc=rank===1?'gold':rank===2?'silver':rank===3?'bronze':'',tot=item.wishCount+item.echoCount;
-    html+='<div class="wish-row"><div class="rank-num '+rc+'">'+rank+'</div><div class="wish-body"><div class="wish-title">'+escHtml(item.courseName)+'</div><div class="wish-sub"><span class="sub-chip">'+escHtml(item.type)+'</span><span class="sub-chip">'+escHtml(item.region||'全區')+'</span><span>許願 '+item.wishCount+' · 附和 '+item.echoCount+'</span></div></div><div class="vote-area"><div class="vote-count"><div class="vote-num">'+tot+'</div><div class="vote-lbl">聲援</div></div><button class="echo-pill" onclick="openEcho(''+escAttr(item.id)+'',''+escAttr(item.courseName)+'')">附和</button></div></div>';
+    html+='<div class="wish-row">'
+      +'<div class="rank-num '+rc+'">'+rank+'</div>'
+      +'<div class="wish-body">'
+        +'<div class="wish-title">'+escHtml(item.courseName)+'</div>'
+        +'<div class="wish-sub">'
+          +'<span class="sub-chip">'+escHtml(item.type)+'</span>'
+          +'<span class="sub-chip">'+escHtml(item.region||'全區')+'</span>'
+          +'<span>許願 '+item.wishCount+' · 附和 '+item.echoCount+'</span>'
+        +'</div>'
+      +'</div>'
+      +'<div class="vote-area">'
+        +'<div class="vote-count"><div class="vote-num">'+tot+'</div><div class="vote-lbl">聲援</div></div>'
+        +'<button class="echo-pill" onclick="openEchoByIndex('+i+')">附和</button>'
+      +'</div>'
+      +'</div>';
   }
   document.getElementById('lb-list').innerHTML=html;
 }
 
 function escHtml(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
-function escAttr(s){return String(s).replace(/\\/g,'\\\\').replace(/'/g,"\\'");}
+function escAttr(s){return String(s).replace(/'/g,'&#39;').replace(/"/g,'&quot;');}
 
+function openEchoByIndex(i){
+  var item=window._boardData[i];
+  openEcho(item.id, item.courseName);
+}
 function openEcho(id,name){
   echoWishId=id;
   document.getElementById('modal-name').textContent=name;
