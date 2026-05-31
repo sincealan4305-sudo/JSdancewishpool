@@ -178,7 +178,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
     <div class="success-panel" id="success-panel">
       <div class="check">✓</div>
       <h3>願望已送出</h3>
-      <p>我們收到你的許願了。<br>有課程開班時，會第一時間通知你。若有任何問題請洽官方LINE。</p>
+      <p>我們收到你的許願了。<br>有課程開班時，會第一時間通知你。</p>
     </div>
   </div>
 </div>
@@ -202,7 +202,8 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
       <button class="reload-btn" onclick="loadBoard()">重新整理</button>
     </div>
     <div id="lb-list"><div class="empty-state"><div class="ico">○</div><p>載入中…</p></div></div>
-    </div>
+    <div class="lb-notice">此頁面僅統計許願與附和人數。</div>
+  </div>
 </div>
 
 <div class="overlay" id="overlay" onclick="onOverlayClick(event)">
@@ -291,10 +292,36 @@ function doSubmitWish(){
 
 function loadBoard(){
   document.getElementById('lb-list').innerHTML='<div class="empty-state"><div class="ico">○</div><p>載入中…</p></div>';
-  var cb='cb_'+Date.now(),s=document.createElement('script');
+  // 用 XHR 搭配 GAS redirect follow，最相容各裝置
+  var xhr = new XMLHttpRequest();
+  xhr.open('GET', GAS_URL+'?action=leaderboard', true);
+  xhr.onload = function(){
+    try {
+      var data = JSON.parse(xhr.responseText);
+      renderBoard(Array.isArray(data)?data:[]);
+    } catch(e) {
+      loadBoardJSONP();
+    }
+  };
+  xhr.onerror = function(){ loadBoardJSONP(); };
+  xhr.send();
+}
+
+function loadBoardJSONP(){
+  var cb='cb_'+Date.now();
+  var s=document.createElement('script');
   s.src=GAS_URL+'?action=leaderboard&callback='+cb;
-  window[cb]=function(data){renderBoard(Array.isArray(data)?data:[]);delete window[cb];if(s.parentNode)s.parentNode.removeChild(s);};
-  s.onerror=function(){document.getElementById('lb-list').innerHTML='<div class="empty-state"><p>載入失敗，請點重新整理</p></div>';if(s.parentNode)s.parentNode.removeChild(s);};
+  var timer=setTimeout(function(){
+    document.getElementById('lb-list').innerHTML='<div class="empty-state"><p>載入失敗，請點重新整理</p></div>';
+    delete window[cb];
+    if(s.parentNode)s.parentNode.removeChild(s);
+  },10000);
+  window[cb]=function(data){
+    clearTimeout(timer);
+    renderBoard(Array.isArray(data)?data:[]);
+    delete window[cb];
+    if(s.parentNode)s.parentNode.removeChild(s);
+  };
   document.head.appendChild(s);
 }
 
