@@ -8,7 +8,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{--black:#1d1d1f;--gray1:#6e6e73;--gray2:#86868b;--gray3:#d2d2d7;--gray4:#f5f5f7;--white:#fff;--blue:#0071e3}
-body{font-family:-apple-system,'SF Pro Display','Noto Sans TC',sans-serif;background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased}
+body{font-family:-apple-system,"SF Pro Display","Noto Sans TC",sans-serif;background:var(--white);color:var(--black);-webkit-font-smoothing:antialiased}
 nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,0.85);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);border-bottom:1px solid rgba(0,0,0,0.08);z-index:999;display:flex;align-items:center;justify-content:space-between;padding:0 24px}
 .nav-logo img{height:28px;display:block;filter:brightness(0)}
 .nav-tabs{display:flex;height:52px}
@@ -94,12 +94,30 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
 .btn-solid:hover{background:#0077ed}
 .btn-solid:disabled{background:var(--gray3);cursor:not-allowed}
 #hidden-iframe{display:none;width:0;height:0;border:none}
+.loading-txt{color:var(--gray2);font-size:14px;text-align:center;padding:32px}
 @media(max-width:500px){.field-grid2{grid-template-columns:1fr}.lb-stats{gap:8px}.stat-num{font-size:1.5rem}}
 </style>
 </head>
 <body>
 
-<!-- 隱藏 iframe：用來接收 form 送出後的回應，避免頁面跳轉 -->
+<div id="line-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#06C755;color:#fff;padding:14px 20px;font-size:14px;font-weight:500;text-align:center;line-height:1.5;font-family:-apple-system,sans-serif">
+  請點右上角 ··· → 用瀏覽器開啟，以確保功能正常 🙏
+</div>
+<script>
+(function(){
+  var ua = navigator.userAgent||'';
+  if(ua.indexOf('Line/')>-1){
+    document.getElementById('line-banner').style.display='block';
+    document.addEventListener('DOMContentLoaded',function(){
+      var h=document.getElementById('line-banner').offsetHeight;
+      var nav=document.querySelector('nav');
+      if(nav) nav.style.top=h+'px';
+      document.querySelectorAll('.page').forEach(function(p){p.style.paddingTop=(52+h)+'px';});
+    });
+  }
+})();
+</script>
+
 <iframe id="hidden-iframe" name="hidden-iframe"></iframe>
 
 <nav>
@@ -165,6 +183,13 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
       <div class="cond" id="cond-custom">
         <div class="field"><label>課程名稱 <span class="req">*</span></label><input type="text" id="f-custom" placeholder="請描述你想學的內容"></div>
       </div>
+      <div class="field-grid1" style="margin-top:12px">
+        <div class="field"><label>指定老師</label>
+          <select id="f-teacher">
+            <option value="不指定">不指定，讓教室安排</option>
+          </select>
+        </div>
+      </div>
     </div>
     <button class="cta-btn" id="submit-btn" onclick="doSubmitWish()">送出許願</button>
     <div class="success-panel" id="success-panel">
@@ -193,7 +218,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
       <div class="list-title">課程排行</div>
       <button class="reload-btn" onclick="loadBoard()">重新整理</button>
     </div>
-    <div id="lb-list"><div class="empty-state"><div class="ico">○</div><p>載入中…</p></div></div>
+    <div id="lb-list"><div class="loading-txt">載入中…</div></div>
     <div class="lb-notice">此頁面不顯示任何個人資料，僅統計許願與附和人數。</div>
   </div>
 </div>
@@ -216,253 +241,236 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
 </div>
 
 <script>
-var GAS = 'https://script.google.com/macros/s/AKfycby9VpVUOfFjQ8PhgL21rhure0UT0fnc8DlyDtQ75AW_9ZEh9LXQSMhp1qrdRfSwoH5B/exec';
+var GAS = "https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec";
 var echoWishId = null;
+var _settings = null;
 
-// ── 頁面切換 ──
 function showPage(name) {
-  ['wish','board'].forEach(function(n) {
-    document.getElementById('page-'+n).classList.remove('active');
-    document.getElementById('tab-'+n).classList.remove('active');
+  ["wish","board"].forEach(function(n) {
+    document.getElementById("page-"+n).classList.remove("active");
+    document.getElementById("tab-"+n).classList.remove("active");
   });
-  document.getElementById('page-'+name).classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
-  if (name === 'board') loadBoard();
+  document.getElementById("page-"+name).classList.add("active");
+  document.getElementById("tab-"+name).classList.add("active");
+  if (name === "board") loadBoard();
 }
 
-// ── 地區時段 ──
-var timeslots = {
-  'tc': { label: '台中', slots: ['周日下午 4:00','周日下午 5:00','周日下午 6:00','周日下午 7:00','周日下午 8:00'] },
-  'ks': { label: '高雄', slots: ['周三晚上 8:30','周三晚上 9:00','周三晚上 9:30','周三晚上 10:00'] }
-};
+// 啟動時載入設定（時段 + 老師）
+function loadSettings() {
+  var cb = "scb" + Date.now();
+  var s = document.createElement("script");
+  s.src = GAS + "?action=settings&callback=" + cb + "&t=" + Date.now();
+  window[cb] = function(data) {
+    _settings = data;
+    applySettings(data);
+    delete window[cb];
+    if (s.parentNode) s.parentNode.removeChild(s);
+  };
+  s.onerror = function() {
+    if (s.parentNode) s.parentNode.removeChild(s);
+  };
+  document.head.appendChild(s);
+}
+
+function applySettings(data) {
+  // 填老師選單
+  var sel = document.getElementById("f-teacher");
+  sel.innerHTML = "<option value="不指定">不指定，讓教室安排</option>";
+  if (data.teachers && data.teachers.length) {
+    data.teachers.forEach(function(t) {
+      var opt = document.createElement("option");
+      opt.value = t; opt.textContent = t;
+      sel.appendChild(opt);
+    });
+  }
+}
 
 function onRegionChange() {
-  var val = document.getElementById('f-region').value;
-  var box = document.getElementById('time-pills');
-  box.innerHTML = '';
-  if (!val) { box.innerHTML = '<div class="pill-hint">請先選擇地區</div>'; return; }
-  var key = val === '台中' ? 'tc' : 'ks';
-  var wrap = document.createElement('div');
-  wrap.className = 'pill-wrap';
-  timeslots[key].slots.forEach(function(t) {
-    var el = document.createElement('div');
-    el.className = 'pill';
+  var region = document.getElementById("f-region").value;
+  var box = document.getElementById("time-pills");
+  box.innerHTML = "";
+  if (!region) { box.innerHTML = "<div class="pill-hint">請先選擇地區</div>"; return; }
+
+  var slots = [];
+  if (_settings && _settings.timeslots && _settings.timeslots[region]) {
+    slots = _settings.timeslots[region];
+  } else {
+    // 預設時段（設定載入前的備用）
+    slots = region === "台中"
+      ? ["周日下午 4:00","周日下午 5:00","周日下午 6:00","周日下午 7:00","周日下午 8:00"]
+      : ["周三晚上 8:30","周三晚上 9:00","周三晚上 9:30","周三晚上 10:00"];
+  }
+
+  if (!slots.length) {
+    box.innerHTML = "<div class="pill-hint">目前此地區暫無可選時段</div>"; return;
+  }
+
+  var wrap = document.createElement("div");
+  wrap.className = "pill-wrap";
+  slots.forEach(function(t) {
+    var el = document.createElement("div");
+    el.className = "pill";
     el.textContent = t;
-    el.setAttribute('data-val', t);
-    el.addEventListener('click', function() { this.classList.toggle('on'); });
+    el.setAttribute("data-val", t);
+    el.addEventListener("click", function() { this.classList.toggle("on"); });
     wrap.appendChild(el);
   });
   box.appendChild(wrap);
 }
 
 function getSelectedTimes() {
-  var pills = document.querySelectorAll('#time-pills .pill.on');
+  var pills = document.querySelectorAll("#time-pills .pill.on");
   var vals = [];
-  for (var i = 0; i < pills.length; i++) vals.push(pills[i].getAttribute('data-val'));
+  for (var i = 0; i < pills.length; i++) vals.push(pills[i].getAttribute("data-val"));
   return vals;
 }
 
 function onTypeChange() {
-  var v = document.getElementById('f-type').value;
-  document.getElementById('cond-song').className = 'cond' + (v === '舞蹈' ? ' show' : '');
-  document.getElementById('cond-custom').className = 'cond' + (v === '其他' ? ' show' : '');
+  var v = document.getElementById("f-type").value;
+  document.getElementById("cond-song").className = "cond" + (v === "舞蹈" ? " show" : "");
+  document.getElementById("cond-custom").className = "cond" + (v === "其他" ? " show" : "");
 }
 
-// ── 送出許願（用隱藏 form，Safari 完全相容）──
 function doSubmitWish() {
-  var name = document.getElementById('f-name').value.trim();
-  var phone = document.getElementById('f-phone').value.trim();
-  var email = document.getElementById('f-email').value.trim();
-  var region = document.getElementById('f-region').value;
+  var name = document.getElementById("f-name").value.trim();
+  var phone = document.getElementById("f-phone").value.trim();
+  var email = document.getElementById("f-email").value.trim();
+  var region = document.getElementById("f-region").value;
   var times = getSelectedTimes();
-  var type = document.getElementById('f-type').value;
-  var song = document.getElementById('f-song').value.trim();
-  var custom = document.getElementById('f-custom').value.trim();
+  var type = document.getElementById("f-type").value;
+  var song = document.getElementById("f-song").value.trim();
+  var custom = document.getElementById("f-custom").value.trim();
+  var teacher = document.getElementById("f-teacher").value;
 
   if (!name||!phone||!email||!region||times.length===0||!type) {
-    alert('請填寫所有必填欄位，並選擇偏好時段'); return;
+    alert("請填寫所有必填欄位，並選擇偏好時段"); return;
   }
-  if (type === '舞蹈' && !song) { alert('請填寫歌曲名稱'); return; }
-  if (type === '其他' && !custom) { alert('請填寫課程名稱'); return; }
+  if (type === "舞蹈" && !song) { alert("請填寫歌曲名稱"); return; }
+  if (type === "其他" && !custom) { alert("請填寫課程名稱"); return; }
 
-  var courseName = type === '舞蹈' ? song : (type === '其他' ? custom : type);
-  var ts = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
+  var courseName = type === "舞蹈" ? song : (type === "其他" ? custom : type);
+  var ts = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 
-  // 用隱藏 form 送出 —— 所有瀏覽器包括 Safari 都支援，不受 CORS 限制
   sendViaForm({
-    action: 'wish',
-    name: name,
-    phone: phone,
-    email: email,
-    region: region,
-    time: times.join('、'),
-    type: type,
-    courseName: courseName,
-    timestamp: ts
+    action: "wish",
+    name: name, phone: phone, email: email,
+    region: region, time: times.join("、"),
+    type: type, courseName: courseName,
+    teacher: teacher, timestamp: ts
   });
 
-  var btn = document.getElementById('submit-btn');
-  btn.disabled = true;
-  btn.textContent = '送出中…';
-
-  // 等 2 秒後顯示成功（form 送出後我們收不到回應，但資料已送達）
+  var btn = document.getElementById("submit-btn");
+  btn.disabled = true; btn.textContent = "送出中…";
   setTimeout(function() {
-    document.getElementById('success-panel').style.display = 'block';
-    btn.style.display = 'none';
+    document.getElementById("success-panel").style.display = "block";
+    btn.style.display = "none";
   }, 2000);
 }
 
-// 建立隱藏 form 並送出
 function sendViaForm(params) {
-  var form = document.createElement('form');
-  form.method = 'GET';
+  var form = document.createElement("form");
+  form.method = "GET";
   form.action = GAS;
-  form.target = 'hidden-iframe'; // 送到隱藏 iframe，頁面不會跳轉
-
-  Object.keys(params).forEach(function(key) {
-    var input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = key;
-    input.value = params[key];
-    form.appendChild(input);
+  form.target = "hidden-iframe";
+  Object.keys(params).forEach(function(k) {
+    var inp = document.createElement("input");
+    inp.type = "hidden"; inp.name = k; inp.value = params[k];
+    form.appendChild(inp);
   });
-
   document.body.appendChild(form);
   form.submit();
   document.body.removeChild(form);
 }
 
-// ── 排行榜（JSONP）──
 function loadBoard() {
-  document.getElementById('lb-list').innerHTML =
-    '<div class="empty-state"><div class="ico">○</div><p>載入中…</p></div>';
-
-  var cbName = 'jscb' + Date.now();
-  var script = document.createElement('script');
-  // 加上 t= 避免快取
-  script.src = GAS + '?action=leaderboard&callback=' + cbName + '&t=' + Date.now();
-  script.async = true;
-
+  document.getElementById("lb-list").innerHTML = "<div class="loading-txt">載入中…</div>";
+  var cb = "jscb" + Date.now();
+  var s = document.createElement("script");
+  s.src = GAS + "?action=leaderboard&callback=" + cb + "&t=" + Date.now();
   var timer = setTimeout(function() {
-    document.getElementById('lb-list').innerHTML =
-      '<div class="empty-state"><p>載入逾時，請點重新整理</p></div>';
+    document.getElementById("lb-list").innerHTML = "<div class="empty-state"><p>載入逾時，請點重新整理</p></div>";
     cleanup();
   }, 12000);
-
-  window[cbName] = function(data) {
+  window[cb] = function(data) {
     clearTimeout(timer);
     renderBoard(Array.isArray(data) ? data : []);
     cleanup();
   };
-
-  function cleanup() {
-    delete window[cbName];
-    if (script.parentNode) script.parentNode.removeChild(script);
-  }
-
-  // Safari 需要先 append 才能設 src，這樣寫最相容
-  document.head.appendChild(script);
+  function cleanup() { delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s); }
+  document.head.appendChild(s);
 }
 
 function renderBoard(data) {
   if (!data.length) {
-    document.getElementById('lb-list').innerHTML =
-      '<div class="empty-state"><div class="ico">✦</div><p>還沒有人許願，成為第一個吧！</p></div>';
-    ['s-total','s-items','s-top'].forEach(function(id) {
-      document.getElementById(id).textContent = '0';
-    });
+    document.getElementById("lb-list").innerHTML = "<div class="empty-state"><div class="ico">✦</div><p>還沒有人許願，成為第一個吧！</p></div>";
+    ["s-total","s-items","s-top"].forEach(function(id) { document.getElementById(id).textContent = "0"; });
     return;
   }
-
   data.sort(function(a,b) { return (b.wishCount+b.echoCount)-(a.wishCount+a.echoCount); });
   var grand = 0;
   for (var i = 0; i < data.length; i++) grand += data[i].wishCount + data[i].echoCount;
-  document.getElementById('s-total').textContent = grand;
-  document.getElementById('s-items').textContent = data.length;
-  document.getElementById('s-top').textContent = data[0].wishCount + data[0].echoCount;
-
-  window._bd = data; // 存全域，避免 onclick 字串跳脫問題
-
-  var html = '';
+  document.getElementById("s-total").textContent = grand;
+  document.getElementById("s-items").textContent = data.length;
+  document.getElementById("s-top").textContent = data[0].wishCount + data[0].echoCount;
+  window._bd = data;
+  var html = "";
   for (var i = 0; i < data.length; i++) {
-    var item = data[i];
-    var rank = i + 1;
-    var rc = rank === 1 ? 'gold' : rank === 2 ? 'silver' : rank === 3 ? 'bronze' : '';
+    var item = data[i], rank = i+1;
+    var rc = rank===1?"gold":rank===2?"silver":rank===3?"bronze":"";
     var tot = item.wishCount + item.echoCount;
-    html += '<div class="wish-row">'
-      + '<div class="rank-num ' + rc + '">' + rank + '</div>'
-      + '<div class="wish-body">'
-        + '<div class="wish-title">' + esc(item.courseName) + '</div>'
-        + '<div class="wish-sub">'
-          + '<span class="sub-chip">' + esc(item.type) + '</span>'
-          + '<span class="sub-chip">' + esc(item.region || '全區') + '</span>'
-          + '<span>許願 ' + item.wishCount + ' · 附和 ' + item.echoCount + '</span>'
-        + '</div>'
-      + '</div>'
-      + '<div class="vote-area">'
-        + '<div class="vote-count"><div class="vote-num">' + tot + '</div><div class="vote-lbl">聲援</div></div>'
-        + '<button class="echo-pill" onclick="openEcho(' + i + ')">附和</button>'
-      + '</div>'
-      + '</div>';
+    html += "<div class="wish-row">"
+      + "<div class="rank-num "+rc+"">"+rank+"</div>"
+      + "<div class="wish-body">"
+        + "<div class="wish-title">"+esc(item.courseName)+"</div>"
+        + "<div class="wish-sub">"
+          + "<span class="sub-chip">"+esc(item.type)+"</span>"
+          + "<span class="sub-chip">"+esc(item.region||"全區")+"</span>"
+          + "<span>許願 "+item.wishCount+" · 附和 "+item.echoCount+"</span>"
+        + "</div>"
+      + "</div>"
+      + "<div class="vote-area">"
+        + "<div class="vote-count"><div class="vote-num">"+tot+"</div><div class="vote-lbl">聲援</div></div>"
+        + "<button class="echo-pill" onclick="openEcho("+i+")">附和</button>"
+      + "</div>"
+      + "</div>";
   }
-  document.getElementById('lb-list').innerHTML = html;
+  document.getElementById("lb-list").innerHTML = html;
 }
 
-function esc(s) {
-  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+function esc(s) { return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
 
-// ── 附和 ──
 function openEcho(idx) {
   var item = window._bd[idx];
   echoWishId = item.id;
-  document.getElementById('modal-name').textContent = item.courseName;
-  document.getElementById('m-name').value = '';
-  document.getElementById('m-phone').value = '';
-  document.getElementById('m-email').value = '';
-  var btn = document.getElementById('btn-ok');
-  btn.disabled = false;
-  btn.textContent = '確認附和';
-  document.getElementById('overlay').classList.add('open');
+  document.getElementById("modal-name").textContent = item.courseName;
+  document.getElementById("m-name").value = "";
+  document.getElementById("m-phone").value = "";
+  document.getElementById("m-email").value = "";
+  var btn = document.getElementById("btn-ok");
+  btn.disabled = false; btn.textContent = "確認附和";
+  document.getElementById("overlay").classList.add("open");
 }
 
-function closeOverlay() {
-  document.getElementById('overlay').classList.remove('open');
-}
-
-function onOverlayClick(e) {
-  if (e.target === document.getElementById('overlay')) closeOverlay();
-}
+function closeOverlay() { document.getElementById("overlay").classList.remove("open"); }
+function onOverlayClick(e) { if (e.target === document.getElementById("overlay")) closeOverlay(); }
 
 function doSubmitEcho() {
-  var name = document.getElementById('m-name').value.trim();
-  var phone = document.getElementById('m-phone').value.trim();
-  var email = document.getElementById('m-email').value.trim();
-  if (!name||!phone||!email) { alert('請填寫完整資料'); return; }
-
-  var btn = document.getElementById('btn-ok');
-  btn.disabled = true;
-  btn.textContent = '附和中…';
-
-  var ts = new Date().toLocaleString('zh-TW', { timeZone: 'Asia/Taipei' });
-
-  sendViaForm({
-    action: 'echo',
-    wishId: echoWishId,
-    name: name,
-    phone: phone,
-    email: email,
-    timestamp: ts
-  });
-
+  var name = document.getElementById("m-name").value.trim();
+  var phone = document.getElementById("m-phone").value.trim();
+  var email = document.getElementById("m-email").value.trim();
+  if (!name||!phone||!email) { alert("請填寫完整資料"); return; }
+  var btn = document.getElementById("btn-ok");
+  btn.disabled = true; btn.textContent = "附和中…";
+  var ts = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
+  sendViaForm({ action:"echo", wishId:echoWishId, name:name, phone:phone, email:email, timestamp:ts });
   setTimeout(function() {
-    btn.textContent = '已附和 ✓';
-    setTimeout(function() {
-      closeOverlay();
-      loadBoard();
-    }, 800);
+    btn.textContent = "已附和 ✓";
+    setTimeout(function() { closeOverlay(); loadBoard(); }, 800);
   }, 2000);
 }
+
+// 頁面載入時取得設定
+loadSettings();
 </script>
 </body>
 </html>
