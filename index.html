@@ -96,6 +96,38 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
 #hidden-iframe{display:none;width:0;height:0;border:none}
 .loading-txt{color:var(--gray2);font-size:14px;text-align:center;padding:32px}
 @media(max-width:500px){.field-grid2{grid-template-columns:1fr}.lb-stats{gap:8px}.stat-num{font-size:1.5rem}}
+
+.t-card {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px 6px 6px;
+  background: #fff;
+  border: 1px solid #d2d2d7;
+  border-radius: 980px;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-size: 13px;
+  color: #1d1d1f;
+  font-family: inherit;
+}
+.t-card:hover { border-color: #1d1d1f; background: #1d1d1f; color: #fff; }
+.t-card:hover .t-avatar { filter: brightness(1.2); }
+.t-avatar {
+  width: 24px; height: 24px; border-radius: 50%;
+  object-fit: cover; background: #e5e5e5;
+  flex-shrink: 0;
+}
+.t-avatar-placeholder {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: #d2d2d7; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; color: #86868b;
+}
+@media(min-width:600px){
+  #teacher-overlay { align-items: center; }
+  #teacher-sheet { border-radius: 18px !important; margin: 0 auto; }
+}
 </style>
 </head>
 <body>
@@ -137,6 +169,24 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
     </div>
   </div>
   <div class="content-wrap">
+    <!-- 操作說明 -->
+    <div style="background:#f5f5f7;border-radius:14px;padding:20px 24px;margin-bottom:32px">
+      <div style="font-size:13px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#86868b;margin-bottom:10px">如何使用許願池</div>
+      <ol style="font-size:14px;color:#1d1d1f;line-height:1.9;padding-left:18px">
+        <li>填寫你的基本資料</li>
+        <li>選擇地區與偏好上課時段</li>
+        <li>選擇想學的課程類型，舞蹈請填歌曲名稱</li>
+        <li>可指定想上課的老師，點名字可查看師資介紹</li>
+        <li>送出許願後，開班時我們會 Email 通知你</li>
+      </ol>
+      <div style="margin-top:14px;padding-top:14px;border-top:1px solid #e5e5e5">
+        <div style="font-size:12px;font-weight:600;letter-spacing:0.06em;text-transform:uppercase;color:#86868b;margin-bottom:10px">師資介紹</div>
+        <div id="teacher-cards" style="display:flex;flex-wrap:wrap;gap:8px">
+          <div style="font-size:13px;color:#86868b">載入中…</div>
+        </div>
+      </div>
+    </div>
+
     <div class="section">
       <div class="section-label">學員資料</div>
       <div class="field-grid2">
@@ -307,6 +357,88 @@ function applySettings(data) {
   }
   teacherSel.disabled = false;
   teacherSel.style.opacity = "1";
+
+  // 載入師資介紹卡片
+  loadTeachers();
+}
+
+// ── 師資介紹 ──
+var _teachers = [];
+
+function loadTeachers() {
+  var cb = "tcb" + Date.now();
+  var s = document.createElement("script");
+  s.src = GAS + "?action=teachers&callback=" + cb + "&t=" + Date.now();
+  var timer = setTimeout(function() {
+    renderTeacherCards([]);
+    cleanup();
+  }, 8000);
+  window[cb] = function(data) {
+    clearTimeout(timer);
+    _teachers = Array.isArray(data) ? data : [];
+    renderTeacherCards(_teachers);
+    cleanup();
+  };
+  function cleanup() { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
+  s.onerror = function() { clearTimeout(timer); renderTeacherCards([]); cleanup(); };
+  document.head.appendChild(s);
+}
+
+function renderTeacherCards(teachers) {
+  var box = document.getElementById("teacher-cards");
+  if (!teachers.length) {
+    box.innerHTML = '<div style="font-size:13px;color:#86868b">暫無師資資訊</div>';
+    return;
+  }
+  box.innerHTML = "";
+  teachers.forEach(function(t, idx) {
+    var btn = document.createElement("button");
+    btn.className = "t-card";
+    btn.onclick = function() { openTeacherModal(idx); };
+    var img = document.createElement("img");
+    img.className = "t-avatar"; img.src = t.photo || ""; img.alt = t.name;
+    img.onerror = function(){ this.style.display="none"; };
+    var placeholder = document.createElement("div");
+    placeholder.className = "t-avatar-placeholder";
+    placeholder.textContent = t.name.charAt(0);
+    var avatarEl = t.photo ? img : placeholder;
+    var span = document.createElement("span");
+    span.textContent = t.name;
+    btn.appendChild(avatarEl);
+    btn.appendChild(span);
+    box.appendChild(btn);
+  });
+}
+
+function openTeacherModal(idx) {
+  var t = _teachers[idx];
+  if (!t) return;
+  document.getElementById("tm-name").textContent = t.name;
+  document.getElementById("tm-name2").textContent = t.name;
+  document.getElementById("tm-specialty").textContent = t.specialty || "";
+  document.getElementById("tm-rate").textContent = t.rate || "洽詢";
+  document.getElementById("tm-bio").textContent = t.bio || "";
+
+  var photoWrap = document.getElementById("tm-photo-wrap");
+  var photoImg = document.getElementById("tm-photo");
+  if (t.photo) {
+    photoImg.src = t.photo;
+    photoImg.alt = t.name;
+    photoWrap.style.display = "block";
+  } else {
+    photoWrap.style.display = "none";
+  }
+
+  var overlay = document.getElementById("teacher-overlay");
+  overlay.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closeTeacherModal(event) {
+  if (event && event.target !== document.getElementById("teacher-overlay")) return;
+  var overlay = document.getElementById("teacher-overlay");
+  overlay.style.display = "none";
+  document.body.style.overflow = "";
 }
 
 function onRegionChange() {
@@ -542,6 +674,32 @@ document.addEventListener("DOMContentLoaded", function() {
   loadSettings();
 });
 </script>
+
+<!-- 師資介紹 Modal -->
+<div id="teacher-overlay" style="display:none;position:fixed;inset:0;z-index:99997;background:rgba(0,0,0,0.45);align-items:flex-end;justify-content:center" onclick="closeTeacherModal(event)">
+  <div id="teacher-sheet" style="background:#fff;border-radius:18px 18px 0 0;width:100%;max-width:480px;max-height:88vh;overflow-y:auto;padding:0 0 40px;animation:slideUp 0.3s cubic-bezier(0.32,0.72,0,1)">
+    <div style="position:sticky;top:0;background:#fff;padding:16px 24px 12px;border-bottom:1px solid #f0f0f0;display:flex;align-items:center;justify-content:space-between;z-index:1">
+      <div style="font-size:17px;font-weight:600;letter-spacing:-0.01em" id="tm-name">—</div>
+      <button onclick="closeTeacherModal()" style="width:28px;height:28px;border-radius:50%;background:#f5f5f7;border:none;cursor:pointer;font-size:14px;color:#1d1d1f;display:flex;align-items:center;justify-content:center">✕</button>
+    </div>
+    <div id="tm-photo-wrap" style="width:100%;aspect-ratio:4/3;overflow:hidden;background:#f5f5f7">
+      <img id="tm-photo" src="" alt="" style="width:100%;height:100%;object-fit:cover;display:block">
+    </div>
+    <div style="padding:24px 24px 0">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div>
+          <div style="font-size:20px;font-weight:600;letter-spacing:-0.02em" id="tm-name2">—</div>
+          <div style="font-size:13px;color:#86868b;margin-top:2px" id="tm-specialty">—</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:#86868b;letter-spacing:0.06em;text-transform:uppercase;margin-bottom:2px">鐘點費</div>
+          <div style="font-size:18px;font-weight:600;color:#1d1d1f" id="tm-rate">—</div>
+        </div>
+      </div>
+      <div style="font-size:14px;color:#3a3a3a;line-height:1.75;white-space:pre-wrap" id="tm-bio">—</div>
+    </div>
+  </div>
+</div>
 
 <!-- 許願成功全螢幕畫面 -->
 <div id="success-overlay" style="display:none;position:fixed;inset:0;z-index:99998;background:#fff;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;animation:fadeIn 0.3s ease">
