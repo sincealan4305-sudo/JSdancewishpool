@@ -192,11 +192,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
       </div>
     </div>
     <button class="cta-btn" id="submit-btn" onclick="doSubmitWish()">送出許願</button>
-    <div class="success-panel" id="success-panel">
-      <div class="check">✓</div>
-      <h3>願望已送出</h3>
-      <p>我們收到你的許願了。<br>有課程開班時，會第一時間通知你。</p>
-    </div>
+
   </div>
 </div>
 
@@ -386,8 +382,7 @@ function doSubmitWish() {
   var btn = document.getElementById("submit-btn");
   btn.disabled = true; btn.textContent = "送出中…";
   setTimeout(function() {
-    document.getElementById("success-panel").style.display = "block";
-    btn.style.display = "none";
+    showSuccessOverlay();
   }, 2000);
 }
 
@@ -493,6 +488,49 @@ function doSubmitEcho() {
   }, 2000);
 }
 
+function showSuccessOverlay() {
+  var overlay = document.getElementById("success-overlay");
+  overlay.style.display = "flex";
+  var count = 3;
+  var cd = document.getElementById("success-countdown");
+  cd.textContent = count + " 秒後自動返回…";
+  var timer = setInterval(function() {
+    count--;
+    if (count > 0) {
+      cd.textContent = count + " 秒後自動返回…";
+    } else {
+      clearInterval(timer);
+      overlay.style.animation = "fadeOut 0.3s ease forwards";
+      setTimeout(function() {
+        overlay.style.display = "none";
+        overlay.style.animation = "";
+        resetWishForm();
+      }, 300);
+    }
+  }, 1000);
+}
+
+function resetWishForm() {
+  // 清空所有欄位
+  ["f-name","f-phone","f-email","f-song","f-custom"].forEach(function(id) {
+    document.getElementById(id).value = "";
+  });
+  document.getElementById("f-region").value = "";
+  document.getElementById("f-type").value = "";
+  document.getElementById("time-pills").innerHTML = "<div class=\"pill-hint\">請先選擇地區</div>";
+  document.getElementById("cond-song").className = "cond";
+  document.getElementById("cond-custom").className = "cond";
+  // 重設老師選單到第一項
+  document.getElementById("f-teacher").selectedIndex = 0;
+  // 恢復送出按鈕
+  var btn = document.getElementById("submit-btn");
+  btn.disabled = false;
+  btn.textContent = "送出許願";
+  btn.style.display = "block";
+  // 捲回頂部
+  window.scrollTo({ top: 52, behavior: "smooth" });
+}
+
 // 頁面載入：先把地區和老師選單鎖住，等設定載入完再解鎖
 document.addEventListener("DOMContentLoaded", function() {
   var regionSel = document.getElementById("f-region");
@@ -504,5 +542,18 @@ document.addEventListener("DOMContentLoaded", function() {
   loadSettings();
 });
 </script>
+
+<!-- 許願成功全螢幕畫面 -->
+<div id="success-overlay" style="display:none;position:fixed;inset:0;z-index:99998;background:#fff;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;animation:fadeIn 0.3s ease">
+  <div style="font-size:64px;margin-bottom:24px">✨</div>
+  <div style="font-size:13px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:#86868b;margin-bottom:12px">JS Dance Gallery</div>
+  <h2 style="font-size:28px;font-weight:600;letter-spacing:-0.02em;color:#1d1d1f;margin-bottom:12px">願望已送出</h2>
+  <p style="font-size:16px;font-weight:300;color:#6e6e73;line-height:1.6;max-width:320px">我們收到你的許願了。<br>有課程開班時，會第一時間通知你。</p>
+  <div id="success-countdown" style="margin-top:32px;font-size:13px;color:#86868b"></div>
+</div>
+<style>
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes fadeOut{from{opacity:1}to{opacity:0}}
+</style>
 </body>
 </html>
