@@ -244,6 +244,7 @@ nav{position:fixed;top:0;left:0;right:0;height:52px;background:rgba(255,255,255,
 var GAS = "https://script.google.com/macros/s/AKfycbwLYP7LkJuBzWK7nB6wLa28Z9jwi1WjBf2nJyfZA1VZcgZebK_B9_LaFAOU0gSHR_fE/exec";
 var echoWishId = null;
 var _settings = null;
+var _settingsLoaded = false;
 
 function showPage(name) {
   ["wish","board"].forEach(function(n) {
@@ -255,54 +256,79 @@ function showPage(name) {
   if (name === "board") loadBoard();
 }
 
-// 啟動時載入設定（時段 + 老師）
+// ── 載入設定，完成後才解鎖地區選單 ──
 function loadSettings() {
   var cb = "scb" + Date.now();
   var s = document.createElement("script");
   s.src = GAS + "?action=settings&callback=" + cb + "&t=" + Date.now();
+
+  var timer = setTimeout(function() {
+    // 逾時就用預設值
+    applySettings({
+      timeslots: {
+        "台中": ["周日下午 4:00","周日下午 5:00","周日下午 6:00","周日下午 7:00","周日下午 8:00"],
+        "高雄": ["周三晚上 8:30","周三晚上 9:00","周三晚上 9:30","周三晚上 10:00"]
+      },
+      teachers: []
+    });
+    cleanup();
+  }, 8000);
+
   window[cb] = function(data) {
-    _settings = data;
+    clearTimeout(timer);
     applySettings(data);
+    cleanup();
+  };
+
+  function cleanup() {
     delete window[cb];
     if (s.parentNode) s.parentNode.removeChild(s);
-  };
-  s.onerror = function() {
-    if (s.parentNode) s.parentNode.removeChild(s);
-  };
+  }
+
+  s.onerror = function() { clearTimeout(timer); cleanup(); };
   document.head.appendChild(s);
 }
 
 function applySettings(data) {
+  _settings = data;
+  _settingsLoaded = true;
+
+  // 解鎖地區選單
+  var regionSel = document.getElementById("f-region");
+  regionSel.disabled = false;
+  regionSel.style.opacity = "1";
+
   // 填老師選單
-  var sel = document.getElementById("f-teacher");
-  sel.innerHTML = "<option value="不指定">不指定，讓教室安排</option>";
+  var teacherSel = document.getElementById("f-teacher");
+  teacherSel.innerHTML = '<option value="不指定">不指定，讓教室安排</option>';
   if (data.teachers && data.teachers.length) {
     data.teachers.forEach(function(t) {
       var opt = document.createElement("option");
-      opt.value = t; opt.textContent = t;
-      sel.appendChild(opt);
+      opt.value = t;
+      opt.textContent = t;
+      teacherSel.appendChild(opt);
     });
   }
+  teacherSel.disabled = false;
+  teacherSel.style.opacity = "1";
 }
 
 function onRegionChange() {
   var region = document.getElementById("f-region").value;
   var box = document.getElementById("time-pills");
   box.innerHTML = "";
-  if (!region) { box.innerHTML = "<div class="pill-hint">請先選擇地區</div>"; return; }
 
-  var slots = [];
-  if (_settings && _settings.timeslots && _settings.timeslots[region]) {
-    slots = _settings.timeslots[region];
-  } else {
-    // 預設時段（設定載入前的備用）
-    slots = region === "台中"
-      ? ["周日下午 4:00","周日下午 5:00","周日下午 6:00","周日下午 7:00","周日下午 8:00"]
-      : ["周三晚上 8:30","周三晚上 9:00","周三晚上 9:30","周三晚上 10:00"];
+  if (!region) {
+    box.innerHTML = "<div class=\"pill-hint\">請先選擇地區</div>";
+    return;
   }
 
-  if (!slots.length) {
-    box.innerHTML = "<div class="pill-hint">目前此地區暫無可選時段</div>"; return;
+  var slots = [];
+  if (_settings && _settings.timeslots && _settings.timeslots[region] && _settings.timeslots[region].length) {
+    slots = _settings.timeslots[region];
+  } else {
+    box.innerHTML = "<div class=\"pill-hint\">目前此地區暫無可選時段</div>";
+    return;
   }
 
   var wrap = document.createElement("div");
@@ -332,31 +358,29 @@ function onTypeChange() {
 }
 
 function doSubmitWish() {
-  var name = document.getElementById("f-name").value.trim();
-  var phone = document.getElementById("f-phone").value.trim();
-  var email = document.getElementById("f-email").value.trim();
-  var region = document.getElementById("f-region").value;
-  var times = getSelectedTimes();
-  var type = document.getElementById("f-type").value;
-  var song = document.getElementById("f-song").value.trim();
-  var custom = document.getElementById("f-custom").value.trim();
+  var name    = document.getElementById("f-name").value.trim();
+  var phone   = document.getElementById("f-phone").value.trim();
+  var email   = document.getElementById("f-email").value.trim();
+  var region  = document.getElementById("f-region").value;
+  var times   = getSelectedTimes();
+  var type    = document.getElementById("f-type").value;
+  var song    = document.getElementById("f-song").value.trim();
+  var custom  = document.getElementById("f-custom").value.trim();
   var teacher = document.getElementById("f-teacher").value;
 
   if (!name||!phone||!email||!region||times.length===0||!type) {
     alert("請填寫所有必填欄位，並選擇偏好時段"); return;
   }
-  if (type === "舞蹈" && !song) { alert("請填寫歌曲名稱"); return; }
+  if (type === "舞蹈" && !song)   { alert("請填寫歌曲名稱"); return; }
   if (type === "其他" && !custom) { alert("請填寫課程名稱"); return; }
 
   var courseName = type === "舞蹈" ? song : (type === "其他" ? custom : type);
   var ts = new Date().toLocaleString("zh-TW", { timeZone: "Asia/Taipei" });
 
   sendViaForm({
-    action: "wish",
-    name: name, phone: phone, email: email,
-    region: region, time: times.join("、"),
-    type: type, courseName: courseName,
-    teacher: teacher, timestamp: ts
+    action: "wish", name: name, phone: phone, email: email,
+    region: region, time: times.join("、"), type: type,
+    courseName: courseName, teacher: teacher, timestamp: ts
   });
 
   var btn = document.getElementById("submit-btn");
@@ -383,12 +407,12 @@ function sendViaForm(params) {
 }
 
 function loadBoard() {
-  document.getElementById("lb-list").innerHTML = "<div class="loading-txt">載入中…</div>";
+  document.getElementById("lb-list").innerHTML = "<div class=\"loading-txt\">載入中…</div>";
   var cb = "jscb" + Date.now();
   var s = document.createElement("script");
   s.src = GAS + "?action=leaderboard&callback=" + cb + "&t=" + Date.now();
   var timer = setTimeout(function() {
-    document.getElementById("lb-list").innerHTML = "<div class="empty-state"><p>載入逾時，請點重新整理</p></div>";
+    document.getElementById("lb-list").innerHTML = "<div class=\"empty-state\"><p>載入逾時，請點重新整理</p></div>";
     cleanup();
   }, 12000);
   window[cb] = function(data) {
@@ -396,13 +420,13 @@ function loadBoard() {
     renderBoard(Array.isArray(data) ? data : []);
     cleanup();
   };
-  function cleanup() { delete window[cb]; if(s.parentNode) s.parentNode.removeChild(s); }
+  function cleanup() { delete window[cb]; if (s.parentNode) s.parentNode.removeChild(s); }
   document.head.appendChild(s);
 }
 
 function renderBoard(data) {
   if (!data.length) {
-    document.getElementById("lb-list").innerHTML = "<div class="empty-state"><div class="ico">✦</div><p>還沒有人許願，成為第一個吧！</p></div>";
+    document.getElementById("lb-list").innerHTML = "<div class=\"empty-state\"><div class=\"ico\">✦</div><p>還沒有人許願，成為第一個吧！</p></div>";
     ["s-total","s-items","s-top"].forEach(function(id) { document.getElementById(id).textContent = "0"; });
     return;
   }
@@ -418,19 +442,19 @@ function renderBoard(data) {
     var item = data[i], rank = i+1;
     var rc = rank===1?"gold":rank===2?"silver":rank===3?"bronze":"";
     var tot = item.wishCount + item.echoCount;
-    html += "<div class="wish-row">"
-      + "<div class="rank-num "+rc+"">"+rank+"</div>"
-      + "<div class="wish-body">"
-        + "<div class="wish-title">"+esc(item.courseName)+"</div>"
-        + "<div class="wish-sub">"
-          + "<span class="sub-chip">"+esc(item.type)+"</span>"
-          + "<span class="sub-chip">"+esc(item.region||"全區")+"</span>"
+    html += "<div class=\"wish-row\">"
+      + "<div class=\"rank-num "+rc+"\">"+rank+"</div>"
+      + "<div class=\"wish-body\">"
+        + "<div class=\"wish-title\">"+esc(item.courseName)+"</div>"
+        + "<div class=\"wish-sub\">"
+          + "<span class=\"sub-chip\">"+esc(item.type)+"</span>"
+          + "<span class=\"sub-chip\">"+esc(item.region||"全區")+"</span>"
           + "<span>許願 "+item.wishCount+" · 附和 "+item.echoCount+"</span>"
         + "</div>"
       + "</div>"
-      + "<div class="vote-area">"
-        + "<div class="vote-count"><div class="vote-num">"+tot+"</div><div class="vote-lbl">聲援</div></div>"
-        + "<button class="echo-pill" onclick="openEcho("+i+")">附和</button>"
+      + "<div class=\"vote-area\">"
+        + "<div class=\"vote-count\"><div class=\"vote-num\">"+tot+"</div><div class=\"vote-lbl\">聲援</div></div>"
+        + "<button class=\"echo-pill\" onclick=\"openEcho("+i+")\">附和</button>"
       + "</div>"
       + "</div>";
   }
@@ -455,7 +479,7 @@ function closeOverlay() { document.getElementById("overlay").classList.remove("o
 function onOverlayClick(e) { if (e.target === document.getElementById("overlay")) closeOverlay(); }
 
 function doSubmitEcho() {
-  var name = document.getElementById("m-name").value.trim();
+  var name  = document.getElementById("m-name").value.trim();
   var phone = document.getElementById("m-phone").value.trim();
   var email = document.getElementById("m-email").value.trim();
   if (!name||!phone||!email) { alert("請填寫完整資料"); return; }
@@ -469,8 +493,16 @@ function doSubmitEcho() {
   }, 2000);
 }
 
-// 頁面載入時取得設定
-loadSettings();
+// 頁面載入：先把地區和老師選單鎖住，等設定載入完再解鎖
+document.addEventListener("DOMContentLoaded", function() {
+  var regionSel = document.getElementById("f-region");
+  var teacherSel = document.getElementById("f-teacher");
+  regionSel.disabled = true;
+  regionSel.style.opacity = "0.4";
+  teacherSel.disabled = true;
+  teacherSel.style.opacity = "0.4";
+  loadSettings();
+});
 </script>
 </body>
 </html>
